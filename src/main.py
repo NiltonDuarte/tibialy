@@ -1,7 +1,7 @@
 import asyncio
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.templating import Jinja2Templates
 from contextlib import asynccontextmanager
 
 from src.core.scheduler import scheduler
@@ -27,10 +27,12 @@ app = FastAPI(lifespan=lifespan, title="Tibialy")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+templates = Jinja2Templates(directory="templates")
+
 
 @app.get("/", tags=["UI"])
-def serve_dashboard() -> FileResponse:
-    return FileResponse("static/index.html")
+def serve_dashboard(request: Request):
+    return templates.TemplateResponse(request=request, name="index.html")
 
 
 # --- NEW JOBS ENDPOINT ---

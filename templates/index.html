@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tibialy Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .pixel-art {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans p-8">
+
+    <div class="max-w-6xl mx-auto space-y-8">
+
+        <div class="border-b border-gray-700 pb-4">
+            <h1 class="text-3xl font-bold text-blue-400 mb-6">Tibialy Control Panel</h1>
+            <nav class="flex space-x-8">
+                <button id="nav-alarms" onclick="switchPage('alarms')" class="pb-2 text-lg font-semibold border-b-2 border-blue-500 text-blue-400 transition hover:text-blue-300">
+                    🔔 Alarms Tool
+                </button>
+                <button id="nav-discord" onclick="switchPage('discord')" class="pb-2 text-lg font-semibold border-b-2 border-transparent text-gray-400 transition hover:text-blue-300 hover:border-gray-500">
+                    💬 Discord Tool
+                </button>
+            </nav>
+        </div>
+
+        {% include "partials/alarms.html" %}
+        {% include "partials/discord.html" %}
+
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-cyan-400">Active Timers</h2>
+            <div id="timersContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <p class="text-gray-500 col-span-full">No active timers.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mt-8 w-full bg-black p-4 rounded-lg border border-gray-700 h-64 overflow-y-auto font-mono text-sm">
+        <h3 class="text-gray-400 mb-2 border-b border-gray-800 pb-1">Activity Log</h3>
+        <ul id="logWindow" class="space-y-1 text-green-300"></ul>
+    </div>
+
+    <script src="/static/js/core.js"></script>
+    <script src="/static/js/alarms.js"></script>
+    <script src="/static/js/discord.js"></script>
+</body>
+</html>
