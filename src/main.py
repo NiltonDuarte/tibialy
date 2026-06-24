@@ -5,12 +5,11 @@ from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 
 from src.core.scheduler import scheduler
-from src.core.logger import setup_logging, get_logger
+from src.core.logger import get_logger
 from src.core.websocket import router as websocket_router, manager
 from src.alarms.router import router as alarms_router
 from src.discord_tools.router import router as discord_router
 
-setup_logging()
 logger = get_logger("tibialy.main")
 
 

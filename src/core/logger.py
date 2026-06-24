@@ -16,5 +16,8 @@ def setup_logging() -> None:
 
 
 def get_logger(name: str):
-    # Bind the logger name directly to the instance
     return structlog.get_logger().bind(logger=name)
+
+
+# BINGO: Initialize immediately when this module is imported!
+setup_logging()
