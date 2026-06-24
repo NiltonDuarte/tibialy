@@ -16,7 +16,6 @@ logger = get_logger("tibialy.main")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     manager.loop = asyncio.get_running_loop()
-
     logger.info("scheduler_starting")
     scheduler.start()
     yield
@@ -32,6 +31,40 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/", tags=["UI"])
 def serve_dashboard() -> FileResponse:
     return FileResponse("static/index.html")
+
+
+# --- NEW JOBS ENDPOINT ---
+@app.get("/api/jobs", tags=["Jobs"])
+def get_active_jobs():
+    jobs = []
+    for job in scheduler.get_jobs():
+        if not job.next_run_time:
+            continue
+
+        # Determine the type and name based on the function scheduled
+        func_name = job.func.__name__
+        if func_name == "trigger_alarm":
+            type_ = "Alarm"
+            name = job.args[0] if job.args else "Unknown Alarm"
+        elif func_name == "send_discord_message":
+            type_ = "Discord"
+            name = f"Msg: {job.args[0]}" if job.args else "Discord Message"
+        else:
+            type_ = "System"
+            name = func_name
+
+        jobs.append(
+            {
+                "id": job.id,
+                "type": type_,
+                "name": name,
+                "next_run_time": job.next_run_time.isoformat(),
+            }
+        )
+
+    # Sort so the closest timers appear first
+    jobs.sort(key=lambda x: x["next_run_time"])
+    return {"jobs": jobs}
 
 
 app.include_router(websocket_router)

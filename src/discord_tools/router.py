@@ -22,7 +22,12 @@ def schedule_message(message: str, trigger_time: datetime):
         )
 
     scheduler.add_job(
-        send_discord_message, "date", run_date=trigger_time, args=[message]
+        send_discord_message,
+        "date",
+        run_date=trigger_time,
+        args=[message],
+        replace_existing=True,
+        misfire_grace_time=1,
     )
     logger.info(
         "discord_message_scheduled",

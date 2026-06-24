@@ -15,7 +15,7 @@ function connectWebSocket() {
 
     websocket = new WebSocket(`ws://${window.location.host}/websocket/logs`);
 
-    websocket.onmessage = function(event) {
+    websocket.onmessage = function (event) {
         const data = JSON.parse(event.data);
 
         let localizedTime = new Date().toLocaleTimeString();
@@ -41,33 +41,65 @@ function connectWebSocket() {
 // Establish connection immediately on page load
 connectWebSocket();
 
-async function triggerEndpoint(url) {
-    connectWebSocket();
 
-    try {
-        const response = await fetch(url, { method: 'POST' });
+// Add this helper function anywhere above setCustomAlarm()
+function parseDurationToMs(durationStr) {
+    const regex = /(\d*\.?\d+)\s*(h|m|s)/gi;
+    let totalMs = 0;
+    let match;
+    let found = false;
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || `Server responded with HTTP ${response.status}`);
-        }
-    } catch (error) {
-        if (error.message.includes("Failed to fetch")) {
-            logAction("Error: Failed to reach the server. Hey there! Please make sure the Tibialy backend is running so the tool can work properly.");
+    while ((match = regex.exec(durationStr)) !== null) {
+        found = true;
+        const val = parseFloat(match[1]);
+        const unit = match[2].toLowerCase();
+
+        if (unit === 'h') totalMs += val * 3600000;
+        else if (unit === 'm') totalMs += val * 60000;
+        else if (unit === 's') totalMs += val * 1000;
+    }
+
+    if (!found) {
+        // Fallback: If they just type a number like "15", assume minutes
+        const num = parseFloat(durationStr);
+        if (!isNaN(num)) {
+            totalMs = num * 60000;
         } else {
-            logAction(`Error: ${error.message}`);
+            return null;
         }
     }
+
+    return totalMs;
 }
 
+// Replace your existing setCustomAlarm() with this one
 function setCustomAlarm() {
     const name = document.getElementById('alarmName').value;
-    const minutes = document.getElementById('alarmMinutes').value;
-    if (!name || !minutes) {
-        logAction("Error: Name and minutes are required.");
+    const durationInput = document.getElementById('alarmDuration').value;
+
+    if (!name || !durationInput) {
+        logAction("Error: Name and duration are required.");
         return;
     }
-    triggerEndpoint(`/alarms/custom?name=${encodeURIComponent(name)}&minutes=${minutes}`);
+
+    const msOffset = parseDurationToMs(durationInput);
+    if (msOffset === null) {
+        logAction("Error: Invalid duration format. Try '1h 15m' or '90s'.");
+        return;
+    }
+
+    // Calculate exact future time
+    const triggerDate = new Date(Date.now() + msOffset);
+
+    // Format to local ISO string (YYYY-MM-DDTHH:mm:ss.sss) for FastAPI
+    const tzOffset = triggerDate.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(triggerDate - tzOffset)).toISOString().slice(0, -1);
+
+    // Log the exact trigger time to the UI immediately
+    logAction(`[SYSTEM] Parsing successful: Custom alarm '${name}' will fire at ${triggerDate.toLocaleTimeString()}`);
+
+    // Hit the trigger_time argument instead of duration/minutes
+    triggerEndpoint(`/alarms/custom?name=${encodeURIComponent(name)}&trigger_time=${encodeURIComponent(localISOTime)}`);
 }
 
 function scheduleDiscord() {
@@ -131,3 +163,104 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('tibialy_discordTime', e.target.value);
     });
 });
+
+// --- RUNNING CLOCKS / TIMERS LOGIC ---
+
+let activeJobs = [];
+
+// Fetch jobs from the backend
+async function fetchJobs() {
+    try {
+        const response = await fetch('/api/jobs');
+        if (response.ok) {
+            const data = await response.json();
+            activeJobs = data.jobs;
+        }
+    } catch (error) {
+        // Silently fail if backend is unreachable so we don't spam the UI
+    }
+}
+
+// Poll backend every 3 seconds to stay synced with APScheduler (catches recurring alarms automatically)
+setInterval(fetchJobs, 3000);
+
+// Update the DOM every second for the running countdown effect
+setInterval(() => {
+    const container = document.getElementById('timersContainer');
+
+    if (activeJobs.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 col-span-full">No active timers.</p>';
+        return;
+    }
+
+    const now = new Date();
+    let html = '';
+
+    activeJobs.forEach(job => {
+        const runTime = new Date(job.next_run_time);
+        const diff = runTime - now;
+
+        // Prevent negative time display while waiting for backend to clear the job
+        let displayTime = "00:00:00";
+
+        if (diff > 0) {
+            const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const m = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
+            const s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
+            displayTime = h === '00' ? `${m}:${s}` : `${h}:${m}:${s}`;
+        }
+
+        // Color coding based on type
+        const typeColor = job.type === 'Discord' ? 'text-indigo-400' : 'text-green-400';
+
+        html += `
+            <div class="bg-gray-900 p-3 rounded border border-gray-700 shadow-inner flex flex-col justify-center items-center text-center">
+                <div class="text-xs uppercase tracking-wide font-bold ${typeColor} mb-1">${job.type}</div>
+                <div class="text-sm text-gray-200 truncate w-full mb-1" title="${job.name}">${job.name}</div>
+                <div class="text-cyan-300 font-mono text-2xl">${displayTime}</div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}, 1000);
+
+// Instantly fetch jobs on load, and hook it to triggerEndpoint to feel instantaneous
+document.addEventListener('DOMContentLoaded', fetchJobs);
+
+// Force a sync the moment the laptop wakes up or the tab becomes active
+function wakeUpSync() {
+    fetchJobs();
+    connectWebSocket(); // Ensure log stream didn't silently drop during sleep
+}
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) wakeUpSync();
+});
+
+window.addEventListener('focus', wakeUpSync);
+
+// We need to modify triggerEndpoint to call fetchJobs() when it finishes successfully
+// Find your existing triggerEndpoint function and add fetchJobs() to the success block:
+async function triggerEndpoint(url) {
+    connectWebSocket();
+
+    try {
+        const response = await fetch(url, { method: 'POST' });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || `Server responded with HTTP ${response.status}`);
+        }
+
+        // INSTANT UI UPDATE
+        fetchJobs();
+
+    } catch (error) {
+        if (error.message.includes("Failed to fetch")) {
+            logAction("Error: Failed to reach the server. Hey there! Please make sure the Tibialy backend is running so the tool can work properly.");
+        } else {
+            logAction(`Error: ${error.message}`);
+        }
+    }
+}
