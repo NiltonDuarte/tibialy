@@ -1,6 +1,6 @@
 [project]
 name = "tibialy"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A set of helping tools for the mmorpg Tibia"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -23,7 +23,20 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pre-commit>=4.6.0",
+    "pyinstaller>=6.21.0",
+    "pillow>=12.2.0",
+    "ruff",
 ]
 
 [tool.ruff]
 extend-exclude = ["bottle.py"]
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/_version.py"
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"

@@ -13,10 +13,22 @@ def main():
         "--noconsole",
         "--paths",
         ".",
+        "--icon",
+        "static/images/app_icon.png",
         "--add-data",
         "static:static",
         "--add-data",
+        "database.yaml:.",
+        "--add-data",
         "templates:templates",
+        "--exclude-module",
+        "PIL",  # <-- Block PIL
+        "--exclude-module",
+        "Pillow",  # <-- Block Pillow
+        "--exclude-module",
+        "setuptools",
+        "--exclude-module",
+        "pkg_resources",
         "src/main.py",
     ]
 

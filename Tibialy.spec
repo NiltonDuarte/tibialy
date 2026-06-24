@@ -5,12 +5,12 @@ a = Analysis(
     ['src/main.py'],
     pathex=['.'],
     binaries=[],
-    datas=[('static', 'static'), ('templates', 'templates')],
+    datas=[('static', 'static'), ('database.yaml', '.'), ('templates', 'templates')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['PIL', 'Pillow', 'setuptools', 'pkg_resources'],
     noarchive=False,
     optimize=0,
 )
@@ -32,6 +32,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['static/images/app_icon.png'],
 )
 coll = COLLECT(
     exe,
@@ -45,6 +46,6 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='Tibialy.app',
-    icon=None,
+    icon='static/images/app_icon.png',
     bundle_identifier=None,
 )

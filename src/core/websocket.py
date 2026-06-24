@@ -1,13 +1,13 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from typing import List, Any, Dict
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
+from typing import Callable, List, Any, Dict
 import asyncio
 import json
 import traceback
 
-router = APIRouter(prefix="/websocket", tags=["websocket"])
+router = APIRouter(prefix="/websocket", tags=["Websocket"])
 
 
-class ConnectionManager:
+class WebSocketManager:
     def __init__(self) -> None:
         self.active_connections: List[WebSocket] = []
         self.loop: asyncio.AbstractEventLoop | None = None
@@ -25,16 +25,22 @@ class ConnectionManager:
             try:
                 await connection.send_text(message)
             except Exception as e:
-                print(f"\n[WS FATAL ERROR] Failed to send_text: {repr(e)}")
+                print(f"\n[WEBSOCKET FATAL ERROR] Failed to send_text: {repr(e)}")
                 traceback.print_exc()
                 self.disconnect(connection)
 
 
-manager = ConnectionManager()
+_manager = WebSocketManager()
+
+
+def get_websocket_manager() -> WebSocketManager:
+    return _manager
 
 
 @router.websocket("/logs")
-async def websocket_endpoint(websocket: WebSocket) -> None:
+async def websocket_endpoint(
+    websocket: WebSocket, manager: WebSocketManager = Depends(get_websocket_manager)
+) -> None:
     await manager.connect(websocket)
     try:
         while True:
@@ -44,9 +50,14 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
 
 
 def websocket_broadcaster(
-    logger: Any, method_name: str, event_dict: Dict[str, Any]
+    logger: Any,
+    method_name: str,
+    event_dict: Dict[str, Any],
+    websocket_manager_provider: Callable[[], WebSocketManager] = get_websocket_manager,
 ) -> Dict[str, Any]:
     """Intercepts logs and broadcasts them. Fails loudly on fatal errors without blocking."""
+
+    manager = websocket_manager_provider()
 
     if not manager.active_connections:
         print(

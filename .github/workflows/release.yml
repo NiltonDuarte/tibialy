@@ -1,0 +1,59 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers whenever you push a tag like "v1.0.0" or "v0.1"
+
+# Required permissions to create the release and upload assets
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            artifact_name: Tibialy-macOS.zip
+          - os: windows-latest
+            artifact_name: Tibialy-Windows.zip
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Build Application
+        run: uv run python build.py
+
+      # macOS `.app` bundles are actually directories and will break if downloaded unzipped.
+      - name: Archive macOS App
+        if: matrix.os == 'macos-latest'
+        run: |
+          cd dist
+          zip -r ../${{ matrix.artifact_name }} Tibialy.app
+
+      # On Windows, PyInstaller (without --onefile) creates a directory containing the .exe and DLLs.
+      - name: Archive Windows App
+        if: matrix.os == 'windows-latest'
+        run: |
+          Compress-Archive -Path dist\Tibialy -DestinationPath ${{ matrix.artifact_name }}
+
+      - name: Upload Artifacts to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.artifact_name }}
+          generate_release_notes: true

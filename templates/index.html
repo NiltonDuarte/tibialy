@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tibialy Dashboard</title>
+    <title>Tibialy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .pixel-art {
@@ -13,17 +14,26 @@
         }
     </style>
 </head>
+<div id="update-banner"
+    style="display: none; background-color: #ffd700; color: #333; padding: 10px; text-align: center; font-weight: bold; margin-bottom: 15px; border-radius: 5px;">
+    🚀 A new version of Tibialy (<span id="new-version-text"></span>) is available!
+    <a id="update-link" href="#" target="_blank" style="color: #0056b3; text-decoration: underline;">Download it
+        here</a>.
+</div>
+
 <body class="bg-gray-900 text-gray-100 font-sans p-8">
 
     <div class="max-w-6xl mx-auto space-y-8">
 
         <div class="border-b border-gray-700 pb-4">
-            <h1 class="text-3xl font-bold text-blue-400 mb-6">Tibialy Control Panel</h1>
+            <h1 class="text-3xl font-bold text-blue-400 mb-6">Tibialy</h1>
             <nav class="flex space-x-8">
-                <button id="nav-alarms" onclick="switchPage('alarms')" class="pb-2 text-lg font-semibold border-b-2 border-blue-500 text-blue-400 transition hover:text-blue-300">
+                <button id="nav-alarms" onclick="switchPage('alarms')"
+                    class="pb-2 text-lg font-semibold border-b-2 border-blue-500 text-blue-400 transition hover:text-blue-300">
                     🔔 Alarms Tool
                 </button>
-                <button id="nav-discord" onclick="switchPage('discord')" class="pb-2 text-lg font-semibold border-b-2 border-transparent text-gray-400 transition hover:text-blue-300 hover:border-gray-500">
+                <button id="nav-discord" onclick="switchPage('discord')"
+                    class="pb-2 text-lg font-semibold border-b-2 border-transparent text-gray-400 transition hover:text-blue-300 hover:border-gray-500">
                     💬 Discord Tool
                 </button>
             </nav>
@@ -49,5 +59,10 @@
     <script src="/static/js/core.js"></script>
     <script src="/static/js/alarms.js"></script>
     <script src="/static/js/discord.js"></script>
+    <script src="/static/js/check_update.js"></script>
+    <footer style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #666;">
+        <p>Version: {{ app_version }}</p>
+    </footer>
 </body>
+
 </html>
