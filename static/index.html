@@ -45,13 +45,10 @@
             <div class="bg-gray-800 p-6 rounded-lg shadow-lg md:col-span-2">
                 <h2 class="text-xl font-semibold mb-4 text-indigo-400">Discord Automation</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <input type="text" id="discordMsg" placeholder="Message to send"
-                        class="col-span-2 p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-indigo-400">
-                    <input type="datetime-local" id="discordTime"
-                        class="p-2 bg-gray-700 rounded border border-gray-600 text-gray-200 focus:outline-none focus:border-indigo-400">
+                    <input type="text" id="discordMsg" placeholder="Message to send" class="col-span-2 p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-indigo-400">
+                    <input type="datetime-local" id="discordTime" step="0.001" class="p-2 bg-gray-700 rounded border border-gray-600 text-gray-200 focus:outline-none focus:border-indigo-400">
                 </div>
-                <button onclick="scheduleDiscord()"
-                    class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded transition">
+                <button onclick="scheduleDiscord()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded transition">
                     💬 Schedule Message
                 </button>
             </div>

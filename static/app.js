@@ -45,13 +45,17 @@ function connectWebSocket() {
 connectWebSocket();
 
 async function triggerEndpoint(url) {
-    // Re-evaluate and re-establish connection if dropped before taking action
     connectWebSocket();
 
     try {
-        await fetch(url, { method: 'POST' });
+        const response = await fetch(url, { method: 'POST' });
+
+        // Check if backend rejected the request (e.g., HTTP 400 Time in past)
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || `Server responded with HTTP ${response.status}`);
+        }
     } catch (error) {
-        // Intercept standard fetch failures (like server being down)
         if (error.message.includes("Failed to fetch")) {
             logAction("Error: Failed to reach the server. Hey there! Please make sure the Tibialy backend is running so the tool can work properly.");
         } else {
@@ -77,5 +81,15 @@ function scheduleDiscord() {
         logAction("Error: Message and time are required.");
         return;
     }
-    triggerEndpoint(`/discord/schedule?message=${encodeURIComponent(msg)}&trigger_time=${time}:00`);
+
+    // Frontend Future Date Check
+    const scheduledDate = new Date(time);
+    const now = new Date();
+
+    if (scheduledDate <= now) {
+        logAction("Error: Scheduled time must be in the future.");
+        return;
+    }
+
+    triggerEndpoint(`/discord/schedule?message=${encodeURIComponent(msg)}&trigger_time=${time}`);
 }
