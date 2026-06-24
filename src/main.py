@@ -67,6 +67,17 @@ def get_active_jobs():
     return {"jobs": jobs}
 
 
+@app.delete("/api/jobs/{job_id}", tags=["Jobs"])
+def cancel_job(job_id: str):
+    try:
+        scheduler.remove_job(job_id)
+        logger.info("job_cancelled", job_id=job_id)
+        return {"status": "Job cancelled"}
+    except Exception as e:
+        logger.warning("job_cancel_failed", job_id=job_id, error=str(e))
+        return {"status": "Job not found or already executed"}
+
+
 app.include_router(websocket_router)
 app.include_router(alarms_router)
 app.include_router(discord_router)

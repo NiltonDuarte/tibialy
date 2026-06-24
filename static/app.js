@@ -108,36 +108,146 @@ function setCustomAlarm() {
     }
 }
 
-function scheduleDiscord() {
-    const msg = document.getElementById('discordMsg').value;
-    const time = document.getElementById('discordTime').value;
-    if (!msg || !time) {
-        logAction("Error: Message and time are required.");
-        return;
-    }
+let yamlDb = { default_duration_hours: 2, characters: [], spots: [] };
 
-    const scheduledDate = new Date(time);
-    const now = new Date();
-
-    if (scheduledDate <= now) {
-        logAction("Error: Scheduled time must be in the future.");
-        return;
-    }
-
-    triggerEndpoint(`/discord/schedule?message=${encodeURIComponent(msg)}&trigger_time=${time}`);
+async function fetchYamlDb() {
+    try {
+        const res = await fetch('/discord/config');
+        if (res.ok) {
+            yamlDb = await res.json();
+            document.getElementById('dbDefaultDuration').value = yamlDb.default_duration_hours;
+            renderDbLists();
+        }
+    } catch (e) { }
 }
 
-// --- LOCAL STORAGE PERSISTENCE ---
+// Helper function to re-draw the UI lists from the current yamlDb object
+function renderDbLists() {
+    // 1. Update Booking Form Dropdowns
+    document.getElementById('characterList').innerHTML = yamlDb.characters.map(c => `<option value="${c}">`).join('');
+    document.getElementById('spotList').innerHTML = yamlDb.spots.map(s => `<option value="${s}">`).join('');
 
-// --- LOCAL STORAGE PERSISTENCE ---
+    // 2. Update Database Tab UI Lists
+    document.getElementById('dbCharList').innerHTML = yamlDb.characters.map((c, i) => `
+        <li class="flex justify-between items-center text-gray-300">
+            <span class="truncate" title="${c}">${c}</span>
+            <button onclick="removeDbItem('characters', ${i})" class="text-red-400 hover:text-red-300 ml-2 font-bold">✖</button>
+        </li>
+    `).join('');
+
+    document.getElementById('dbSpotList').innerHTML = yamlDb.spots.map((s, i) => `
+        <li class="flex justify-between items-center text-gray-300">
+            <span class="truncate" title="${s}">${s}</span>
+            <button onclick="removeDbItem('spots', ${i})" class="text-red-400 hover:text-red-300 ml-2 font-bold">✖</button>
+        </li>
+    `).join('');
+}
+
+function autoSaveDb() {
+    yamlDb.default_duration_hours = parseInt(document.getElementById('dbDefaultDuration').value) || 2;
+    triggerEndpoint('/discord/config', {
+        method: 'PUT',
+        body: JSON.stringify(yamlDb)
+    }).then(() => {
+        logAction("[SYSTEM] Database settings auto-saved."); // Log added back here
+    });
+}
+
+function addDbItem(type, inputId) {
+    const input = document.getElementById(inputId);
+    const val = input.value.trim();
+
+    if (!val) return;
+
+    // Only add if it doesn't already exist
+    if (!yamlDb[type].includes(val)) {
+        yamlDb[type].push(val);
+        renderDbLists(); // Instantly update the UI
+        autoSaveDb();    // Instantly save to the backend
+    } else {
+        logAction(`[SYSTEM] ${val} is already in the database.`);
+    }
+
+    // Clear the input box
+    input.value = '';
+}
+
+function removeDbItem(type, index) {
+    yamlDb[type].splice(index, 1);
+    renderDbLists(); // Instantly update the UI
+    autoSaveDb();    // Instantly save to the backend
+}
+
+function saveDbSettings() {
+    yamlDb.default_duration_hours = parseInt(document.getElementById('dbDefaultDuration').value) || 2;
+    triggerEndpoint('/discord/config', {
+        method: 'PUT',
+        body: JSON.stringify(yamlDb)
+    }).then(() => {
+        logAction("[SYSTEM] Database settings saved successfully.");
+        fetchYamlDb(); // Confirm sync with backend
+    });
+}
+
+
+
+function calculateEndHour() {
+    const start = document.getElementById('bookStart').value;
+    if (!start) return;
+
+    let [hours, mins] = start.split(':').map(Number);
+    hours = (hours + yamlDb.default_duration_hours) % 24;
+
+    document.getElementById('bookEnd').value = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+}
+
+function scheduleDiscordBooking() {
+    const char = document.getElementById('bookChar').value;
+    const spot = document.getElementById('bookSpot').value;
+    const start = document.getElementById('bookStart').value;
+    const end = document.getElementById('bookEnd').value;
+    const time = document.getElementById('discordTime').value;
+
+    if (!char || !spot || !start || !end || !time) {
+        logAction("Error: All booking fields and execution time are required.");
+        return;
+    }
+
+    if (new Date(time) <= new Date()) {
+        logAction("Error: Execution time must be in the future.");
+        return;
+    }
+
+    triggerEndpoint('/discord/schedule', {
+        method: 'POST',
+        body: JSON.stringify({
+            character: char,
+            spot: spot,
+            start_hour: start,
+            end_hour: end,
+            trigger_time: time
+        })
+    }).then(() => {
+        setTimeout(fetchYamlDb, 500); // Reload DB to catch auto-added chars/spots
+    });
+}
+
+// Fetch DB data instantly on page load
+document.addEventListener('DOMContentLoaded', fetchYamlDb);
 
 document.addEventListener('DOMContentLoaded', () => {
-    const msgInput = document.getElementById('discordMsg');
     const timeInput = document.getElementById('discordTime');
 
-    // Restore message
-    const savedMsg = localStorage.getItem('tibialy_discordMsg');
-    if (savedMsg) msgInput.value = savedMsg;
+    const charInput = document.getElementById('bookChar');
+    const spotInput = document.getElementById('bookSpot');
+
+    const savedChar = localStorage.getItem('tibialy_bookChar');
+    const savedSpot = localStorage.getItem('tibialy_bookSpot');
+
+    if (savedChar) charInput.value = savedChar;
+    if (savedSpot) spotInput.value = savedSpot;
+
+
 
     // Restore time, but bump the date to today
     const savedTime = localStorage.getItem('tibialy_discordTime');
@@ -159,12 +269,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Fallback just in case the format is unexpected
         timeInput.value = savedTime;
     }
-
-    // Auto-save values whenever the user types or changes the date
-    msgInput.addEventListener('input', (e) => {
-        localStorage.setItem('tibialy_discordMsg', e.target.value);
-    });
-
+    charInput.addEventListener('input', (e) => localStorage.setItem('tibialy_bookChar', e.target.value));
+    spotInput.addEventListener('input', (e) => localStorage.setItem('tibialy_bookSpot', e.target.value));
     timeInput.addEventListener('input', (e) => {
         localStorage.setItem('tibialy_discordTime', e.target.value);
     });
@@ -220,7 +326,9 @@ setInterval(() => {
         const typeColor = job.type === 'Discord' ? 'text-indigo-400' : 'text-green-400';
 
         html += `
-            <div class="bg-gray-900 p-3 rounded border border-gray-700 shadow-inner flex flex-col justify-center items-center text-center">
+            <div class="relative bg-gray-900 p-3 rounded border border-gray-700 shadow-inner flex flex-col justify-center items-center text-center group">
+                <button onclick="cancelJob('${job.id}')" class="absolute top-1 right-2 text-gray-600 hover:text-red-500 font-bold transition" title="Cancel Timer">✖</button>
+
                 <div class="text-xs uppercase tracking-wide font-bold ${typeColor} mb-1">${job.type}</div>
                 <div class="text-sm text-gray-200 truncate w-full mb-1" title="${job.name}">${job.name}</div>
                 <div class="text-cyan-300 font-mono text-2xl">${displayTime}</div>
@@ -246,27 +354,32 @@ document.addEventListener('visibilitychange', () => {
 
 window.addEventListener('focus', wakeUpSync);
 
-// We need to modify triggerEndpoint to call fetchJobs() when it finishes successfully
-// Find your existing triggerEndpoint function and add fetchJobs() to the success block:
-async function triggerEndpoint(url) {
+async function triggerEndpoint(url, options = {}) {
     connectWebSocket();
-
     try {
-        const response = await fetch(url, { method: 'POST' });
+        const fetchOptions = { method: 'POST', ...options };
+        if (options.body) {
+            fetchOptions.headers = { 'Content-Type': 'application/json' };
+        }
+        const response = await fetch(url, fetchOptions);
 
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.detail || `Server responded with HTTP ${response.status}`);
         }
-
-        // INSTANT UI UPDATE
         fetchJobs();
-
     } catch (error) {
         if (error.message.includes("Failed to fetch")) {
-            logAction("Error: Failed to reach the server. Hey there! Please make sure the Tibialy backend is running so the tool can work properly.");
+            logAction("Error: Failed to reach the server. Please make sure the Tibialy backend is running.");
         } else {
             logAction(`Error: ${error.message}`);
         }
     }
+}
+
+function cancelJob(jobId) {
+    triggerEndpoint(`/api/jobs/${jobId}`, { method: 'DELETE' }).then(() => {
+        logAction("[SYSTEM] Timer cancelled successfully.");
+        fetchJobs(); // Instantly refresh the UI to remove the timer
+    });
 }
