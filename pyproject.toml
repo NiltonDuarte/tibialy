@@ -13,3 +13,8 @@ dependencies = [
     "uvicorn>=0.49.0",
     "websockets>=16.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.0",
+]

@@ -9,6 +9,7 @@
 </head>
 
 <body class="bg-gray-900 text-gray-100 font-sans p-8">
+
     <div class="max-w-4xl mx-auto space-y-8">
         <h1 class="text-3xl font-bold text-blue-400 border-b border-gray-700 pb-4">Tibialy Control Panel</h1>
 
@@ -55,11 +56,10 @@
                 </button>
             </div>
         </div>
-
-        <div class="bg-black p-4 rounded-lg border border-gray-700 h-48 overflow-y-auto font-mono text-sm">
-            <h3 class="text-gray-400 mb-2 border-b border-gray-800 pb-1">Activity Log</h3>
-            <ul id="logWindow" class="space-y-1 text-green-300"></ul>
-        </div>
+    </div>
+    <div class="mt-12 w-full bg-black p-4 rounded-lg border border-gray-700 h-64 overflow-y-auto font-mono text-sm">
+        <h3 class="text-gray-400 mb-2 border-b border-gray-800 pb-1">Activity Log</h3>
+        <ul id="logWindow" class="space-y-1 text-green-300"></ul>
     </div>
 
     <script>
@@ -99,26 +99,31 @@
             triggerEndpoint(`/discord/schedule?message=${encodeURIComponent(msg)}&trigger_time=${time}:00`);
         }
 
-        // WebSocket integration
-        const ws = new WebSocket(`ws://${window.location.host}/ws/logs`);
+        const websocket = new WebSocket(`ws://${window.location.host}/websocket/logs`);
 
-        ws.onmessage = function (event) {
+        websocket.onmessage = function(event) {
             const data = JSON.parse(event.data);
 
-            // Extract core fields
-            const time = data.timestamp;
+            // Parse the raw ISO string into a Date object and localize it
+            let localizedTime = new Date().toLocaleTimeString();
+            if (data.timestamp) {
+                // If the structlog string lacks a "Z", JS assumes it's local time (which matches our local backend)
+                const dateObj = new Date(data.timestamp);
+                // Use toLocaleString() if you want the date included, e.g., "6/24/2026, 2:56:43 PM"
+                localizedTime = dateObj.toLocaleTimeString();
+            }
+
             const level = data.level ? `[${data.level.toUpperCase()}]` : '[INFO]';
             const msg = data.event;
 
-            // Extract kwargs for payload visualization
             const { timestamp, level: l, event: e, logger, ...kwargs } = data;
             const extras = Object.keys(kwargs).length ? JSON.stringify(kwargs) : '';
 
-            logAction(`${level} ${msg} ${extras}`, time);
+            logAction(`${level} ${msg} ${extras}`, localizedTime);
         };
 
-        ws.onopen = () => logAction("[SYSTEM] Connected to real-time log stream.");
-        ws.onclose = () => logAction("[SYSTEM] Disconnected from log stream.");
+        websocket.onopen = () => logAction("[SYSTEM] Connected to real-time log stream.");
+        websocket.onclose = () => logAction("[SYSTEM] Disconnected from log stream.");
     </script>
 </body>
 
