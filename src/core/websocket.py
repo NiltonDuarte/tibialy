@@ -49,6 +49,9 @@ def websocket_broadcaster(
     """Intercepts logs and broadcasts them. Fails loudly on fatal errors without blocking."""
 
     if not manager.active_connections:
+        print(
+            f"\n[FATAL ERROR] Broadcast aborted: No active UI connections to receive log -> {event_dict.get('event')}"
+        )
         return event_dict
 
     try:
@@ -68,7 +71,6 @@ def websocket_broadcaster(
                 manager.broadcast(payload), manager.loop
             )
 
-            # Non-blocking callback to report errors if the threadsafe push fails
             def _log_future_exception(fut: asyncio.Future) -> None:
                 try:
                     fut.result()
