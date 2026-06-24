@@ -1,4 +1,9 @@
+import threading
+import webview
+import uvicorn
 import asyncio
+import sys
+import os
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -10,7 +15,17 @@ from src.core.websocket import router as websocket_router, manager
 from src.alarms.router import router as alarms_router
 from src.discord_tools.router import router as discord_router
 
+# --- PYINSTALLER PATH FIX ---
+# If running as compiled exe, use the temp _MEIPASS folder. Otherwise, use local directory.
+if getattr(sys, "frozen", False):
+    base_dir = sys._MEIPASS
+else:
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 logger = get_logger("tibialy.main")
+
+static_path = os.path.join(base_dir, "static")
+templates_path = os.path.join(base_dir, "templates")
 
 
 @asynccontextmanager
@@ -25,9 +40,9 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, title="Tibialy")
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=static_path), name="static")
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=templates_path)
 
 
 @app.get("/", tags=["UI"])
@@ -83,3 +98,37 @@ def cancel_job(job_id: str):
 app.include_router(websocket_router)
 app.include_router(alarms_router)
 app.include_router(discord_router)
+
+
+# --- DESKTOP APP LAUNCHER ---
+def start_desktop_app():
+    # 1. Configure the FastAPI server programmatically
+    config = uvicorn.Config(app, host="127.0.0.1", port=8000, log_level="warning")
+    server = uvicorn.Server(config)
+
+    # 2. Run the server in a background daemon thread
+    server_thread = threading.Thread(target=server.run, daemon=True)
+    server_thread.start()
+
+    # 3. Create the Native Desktop Window
+    window = webview.create_window(
+        title="Tibialy",
+        url="http://127.0.0.1:8000",
+        width=1200,
+        height=850,
+        background_color="#111827",  # Matches your Tailwind bg-gray-900 to prevent white flashes
+    )
+
+    # 4. Bind the close event to cleanly shut down FastAPI and APScheduler
+    def on_closed():
+        logger.info("window_closed", message="Shutting down local server...")
+        server.should_exit = True
+
+    window.events.closed += on_closed
+
+    # 5. Start the native UI loop (This blocks the script until the window is closed)
+    webview.start()
+
+
+if __name__ == "__main__":
+    start_desktop_app()
