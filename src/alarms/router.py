@@ -1,30 +1,32 @@
 from fastapi import APIRouter
 from datetime import datetime, timedelta
-import os
-import pygame
+import pyttsx3
 from src.core.scheduler import scheduler
 from src.core.logger import get_logger
 
 logger = get_logger("tibialy.alarms")
 router = APIRouter(prefix="/alarms", tags=["alarms"])
 
-pygame.mixer.init()
-
 
 def trigger_alarm(name: str):
     logger.info("alarm_triggered", alarm_name=name)
 
-    sound_file = "static/alarm.mp3"
+    try:
+        # Initialize the TTS engine inside the thread to prevent OS-level COM/threading errors
+        engine = pyttsx3.init()
 
-    if os.path.exists(sound_file):
-        try:
-            pygame.mixer.music.load(sound_file)
-            pygame.mixer.music.play()
-            logger.info("audio_played", file=sound_file)
-        except Exception as e:
-            logger.error("audio_playback_error", error=str(e), file=sound_file)
-    else:
-        logger.warning("audio_file_not_found", file=sound_file)
+        # Optional: Slow down the speaking rate slightly for clarity (default is usually ~200)
+        engine.setProperty("rate", 160)
+
+        # Construct the sentence you want it to speak
+        announcement = f"Attention, {name}."
+
+        engine.say(announcement)
+        engine.runAndWait()
+
+        logger.info("tts_played", text=announcement)
+    except Exception as e:
+        logger.error("tts_playback_error", error=str(e))
 
 
 @router.post("/potion")
@@ -47,7 +49,7 @@ def start_plasma_alarm():
         trigger_alarm,
         "interval",
         minutes=30,
-        args=["Plasma Ring/Amulet"],
+        args=["Plasma Ring or Amulet"],  # Changed '/' to 'or' so it pronounces cleanly
         id="plasma_alarm",
         replace_existing=True,
     )

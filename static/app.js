@@ -9,14 +9,13 @@ function logAction(message, timestamp = null) {
 }
 
 function connectWebSocket() {
-    // Do not reconnect if already open or connecting
     if (websocket && (websocket.readyState === WebSocket.OPEN || websocket.readyState === WebSocket.CONNECTING)) {
         return;
     }
 
     websocket = new WebSocket(`ws://${window.location.host}/websocket/logs`);
 
-    websocket.onmessage = function (event) {
+    websocket.onmessage = function(event) {
         const data = JSON.parse(event.data);
 
         let localizedTime = new Date().toLocaleTimeString();
@@ -35,8 +34,6 @@ function connectWebSocket() {
     };
 
     websocket.onopen = () => logAction("[SYSTEM] Connected to real-time log stream.");
-
-    // Friendly backend reminders on disconnects/errors
     websocket.onclose = () => logAction("[SYSTEM] Disconnected from log stream. (Just a friendly reminder: please check if the backend server is still running!)");
     websocket.onerror = () => logAction("[SYSTEM] WebSocket connection error. Please verify your backend server is active.");
 }
@@ -50,7 +47,6 @@ async function triggerEndpoint(url) {
     try {
         const response = await fetch(url, { method: 'POST' });
 
-        // Check if backend rejected the request (e.g., HTTP 400 Time in past)
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.detail || `Server responded with HTTP ${response.status}`);
@@ -82,7 +78,6 @@ function scheduleDiscord() {
         return;
     }
 
-    // Frontend Future Date Check
     const scheduledDate = new Date(time);
     const now = new Date();
 
@@ -93,3 +88,46 @@ function scheduleDiscord() {
 
     triggerEndpoint(`/discord/schedule?message=${encodeURIComponent(msg)}&trigger_time=${time}`);
 }
+
+// --- LOCAL STORAGE PERSISTENCE ---
+
+// --- LOCAL STORAGE PERSISTENCE ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    const msgInput = document.getElementById('discordMsg');
+    const timeInput = document.getElementById('discordTime');
+
+    // Restore message
+    const savedMsg = localStorage.getItem('tibialy_discordMsg');
+    if (savedMsg) msgInput.value = savedMsg;
+
+    // Restore time, but bump the date to today
+    const savedTime = localStorage.getItem('tibialy_discordTime');
+    if (savedTime && savedTime.includes('T')) {
+        const timePart = savedTime.split('T')[1]; // Extract everything after the 'T' (HH:mm:ss.sss)
+
+        // Get today's local date formatted as YYYY-MM-DD
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+
+        const newDateTime = `${year}-${month}-${day}T${timePart}`;
+
+        // Set the input and update storage with the fresh date
+        timeInput.value = newDateTime;
+        localStorage.setItem('tibialy_discordTime', newDateTime);
+    } else if (savedTime) {
+        // Fallback just in case the format is unexpected
+        timeInput.value = savedTime;
+    }
+
+    // Auto-save values whenever the user types or changes the date
+    msgInput.addEventListener('input', (e) => {
+        localStorage.setItem('tibialy_discordMsg', e.target.value);
+    });
+
+    timeInput.addEventListener('input', (e) => {
+        localStorage.setItem('tibialy_discordTime', e.target.value);
+    });
+});
