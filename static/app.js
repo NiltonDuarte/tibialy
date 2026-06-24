@@ -72,10 +72,10 @@ function parseDurationToMs(durationStr) {
     return totalMs;
 }
 
-// Replace your existing setCustomAlarm() with this one
 function setCustomAlarm() {
     const name = document.getElementById('alarmName').value;
     const durationInput = document.getElementById('alarmDuration').value;
+    const isRecurring = document.getElementById('alarmRecurring').checked;
 
     if (!name || !durationInput) {
         logAction("Error: Name and duration are required.");
@@ -88,18 +88,24 @@ function setCustomAlarm() {
         return;
     }
 
-    // Calculate exact future time
-    const triggerDate = new Date(Date.now() + msOffset);
+    if (isRecurring) {
+        // Recurring loop logic -> Hits the new /recurring endpoint
+        const intervalSeconds = Math.floor(msOffset / 1000);
+        if (intervalSeconds < 1) {
+            logAction("Error: Recurring interval must be at least 1 second.");
+            return;
+        }
+        logAction(`[SYSTEM] Parsing successful: Custom recurring alarm '${name}' will fire every ${intervalSeconds} seconds.`);
+        triggerEndpoint(`/alarms/custom/recurring?name=${encodeURIComponent(name)}&interval_seconds=${intervalSeconds}`);
+    } else {
+        // One-off specific time logic -> Hits the new /once endpoint
+        const triggerDate = new Date(Date.now() + msOffset);
+        const tzOffset = triggerDate.getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(triggerDate - tzOffset)).toISOString().slice(0, -1);
 
-    // Format to local ISO string (YYYY-MM-DDTHH:mm:ss.sss) for FastAPI
-    const tzOffset = triggerDate.getTimezoneOffset() * 60000;
-    const localISOTime = (new Date(triggerDate - tzOffset)).toISOString().slice(0, -1);
-
-    // Log the exact trigger time to the UI immediately
-    logAction(`[SYSTEM] Parsing successful: Custom alarm '${name}' will fire at ${triggerDate.toLocaleTimeString()}`);
-
-    // Hit the trigger_time argument instead of duration/minutes
-    triggerEndpoint(`/alarms/custom?name=${encodeURIComponent(name)}&trigger_time=${encodeURIComponent(localISOTime)}`);
+        logAction(`[SYSTEM] Parsing successful: Custom alarm '${name}' will fire at ${triggerDate.toLocaleTimeString()}`);
+        triggerEndpoint(`/alarms/custom/once?name=${encodeURIComponent(name)}&trigger_time=${encodeURIComponent(localISOTime)}`);
+    }
 }
 
 function scheduleDiscord() {
