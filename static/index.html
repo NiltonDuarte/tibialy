@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tibialy Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-gray-100 font-sans p-8">
+    <div class="max-w-4xl mx-auto space-y-8">
+        <h1 class="text-3xl font-bold text-blue-400 border-b border-gray-700 pb-4">Tibialy Control Panel</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold mb-4 text-green-400">Quick Alarms</h2>
+                <div class="space-y-4">
+                    <button onclick="triggerEndpoint('/alarms/potion')"
+                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded transition">
+                        🧪 Start Skill Potion (10m)
+                    </button>
+                    <button onclick="triggerEndpoint('/alarms/plasma')"
+                        class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded transition">
+                        💍 Start Plasma Ring/Amulet (30m)
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold mb-4 text-yellow-400">Custom Alarm</h2>
+                <div class="space-y-3">
+                    <input type="text" id="alarmName" placeholder="Alarm Name"
+                        class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-yellow-400">
+                    <input type="number" id="alarmMinutes" placeholder="Minutes from now"
+                        class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-yellow-400">
+                    <button onclick="setCustomAlarm()"
+                        class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded transition">
+                        ⏰ Set Custom Alarm
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg md:col-span-2">
+                <h2 class="text-xl font-semibold mb-4 text-indigo-400">Discord Automation</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input type="text" id="discordMsg" placeholder="Message to send"
+                        class="col-span-2 p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-indigo-400">
+                    <input type="datetime-local" id="discordTime"
+                        class="p-2 bg-gray-700 rounded border border-gray-600 text-gray-200 focus:outline-none focus:border-indigo-400">
+                </div>
+                <button onclick="scheduleDiscord()"
+                    class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded transition">
+                    💬 Schedule Message
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-black p-4 rounded-lg border border-gray-700 h-48 overflow-y-auto font-mono text-sm">
+            <h3 class="text-gray-400 mb-2 border-b border-gray-800 pb-1">Activity Log</h3>
+            <ul id="logWindow" class="space-y-1 text-green-300"></ul>
+        </div>
+    </div>
+
+    <script>
+        function logAction(message, timestamp = null) {
+            const logWindow = document.getElementById('logWindow');
+            const time = timestamp || new Date().toLocaleTimeString();
+            const li = document.createElement('li');
+            li.textContent = `[${time}] ${message}`;
+            logWindow.prepend(li);
+        }
+
+        async function triggerEndpoint(url) {
+            try {
+                await fetch(url, { method: 'POST' });
+            } catch (error) {
+                logAction(`Error: ${error.message}`);
+            }
+        }
+
+        function setCustomAlarm() {
+            const name = document.getElementById('alarmName').value;
+            const minutes = document.getElementById('alarmMinutes').value;
+            if (!name || !minutes) {
+                logAction("Error: Name and minutes are required.");
+                return;
+            }
+            triggerEndpoint(`/alarms/custom?name=${encodeURIComponent(name)}&minutes=${minutes}`);
+        }
+
+        function scheduleDiscord() {
+            const msg = document.getElementById('discordMsg').value;
+            const time = document.getElementById('discordTime').value;
+            if (!msg || !time) {
+                logAction("Error: Message and time are required.");
+                return;
+            }
+            triggerEndpoint(`/discord/schedule?message=${encodeURIComponent(msg)}&trigger_time=${time}:00`);
+        }
+
+        // WebSocket integration
+        const ws = new WebSocket(`ws://${window.location.host}/ws/logs`);
+
+        ws.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+
+            // Extract core fields
+            const time = data.timestamp;
+            const level = data.level ? `[${data.level.toUpperCase()}]` : '[INFO]';
+            const msg = data.event;
+
+            // Extract kwargs for payload visualization
+            const { timestamp, level: l, event: e, logger, ...kwargs } = data;
+            const extras = Object.keys(kwargs).length ? JSON.stringify(kwargs) : '';
+
+            logAction(`${level} ${msg} ${extras}`, time);
+        };
+
+        ws.onopen = () => logAction("[SYSTEM] Connected to real-time log stream.");
+        ws.onclose = () => logAction("[SYSTEM] Disconnected from log stream.");
+    </script>
+</body>
+
+</html>

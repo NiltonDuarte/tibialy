@@ -1,0 +1,15 @@
+[project]
+name = "tibialy"
+version = "0.1.0"
+description = "A set of helping tools for the mmorpg Tibia"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "apscheduler>=3.11.2",
+    "fastapi>=0.138.0",
+    "pyautogui>=0.9.54",
+    "pygame>=2.6.1",
+    "structlog>=26.1.0",
+    "uvicorn>=0.49.0",
+    "websockets>=16.0",
+]
