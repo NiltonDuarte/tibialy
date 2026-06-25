@@ -17,7 +17,7 @@ class ScheduleRequest(BaseModel):
     start_hour: str
     end_hour: str
     trigger_time: datetime
-    message_count: int = 1
+    message_count: int
 
 
 class ConfigModel(BaseModel):
