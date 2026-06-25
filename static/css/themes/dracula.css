@@ -1,0 +1,60 @@
+:root {
+    /* Backgrounds */
+    --bg-base: #282a36;
+    --bg-panel: #44475a;
+    --bg-input: #343746;
+    --bg-console: #1e1f29;
+
+    /* Text */
+    --text-white: #ffffff;
+    --text-main: #f8f8f2;
+    --text-muted: #e2e2dc;
+    --text-dim: #6272a4;
+
+    /* Borders */
+    --border-dark: #1e1f29;
+    --border-base: #6272a4;
+    --border-light: #44475a;
+
+    /* Accents */
+    --accent-text: #ff79c6;
+    /* Pink */
+    --accent-bg: #bd93f9;
+    /* Purple */
+    --accent-hover: #ff79c6;
+    /* Pink */
+    --accent-focus: #ffb86c;
+    /* Orange */
+
+    /* Logs */
+    --log-text: #50fa7b;
+    /* Green */
+    --log-sys: #8be9fd;
+    /* Cyan */
+
+    /* Specialized Tool Buttons */
+    --btn-plasma-ring-bg: #bd93f9;
+    /* Dracula Purple */
+    --btn-plasma-ring-hover: #caa9fa;
+    /* Light Purple */
+
+    --btn-plasma-amulet-bg: #ff79c6;
+    /* Dracula Pink */
+    --btn-plasma-amulet-hover: #ff92d0;
+    /* Light Pink */
+
+    --btn-prismatic-ring-bg: #50fa7b;
+    /* Dracula Green */
+    --btn-prismatic-ring-hover: #69ff94;
+    /* Light Green */
+
+    --btn-discord-bg: #8be9fd;
+    /* Dracula Cyan */
+    --btn-discord-hover: #a4f1fe;
+    /* Light Cyan */
+
+    --btn-custom-alarm-bg: #ffb86c;
+    /* Dracula Orange/Yellow */
+    --btn-custom-alarm-hover: #ffc785;
+    /* Light Orange */
+}

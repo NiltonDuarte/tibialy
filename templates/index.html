@@ -6,13 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tibialy</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .pixel-art {
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-        }
-    </style>
+    <link id="theme-stylesheet" rel="stylesheet" href="/static/css/themes/default.css">
+    <script src="/static/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="/static/css/global.css">
+
 </head>
 <div id="update-banner"
     style="display: none; background-color: #ffd700; color: #333; padding: 10px; text-align: center; font-weight: bold; margin-bottom: 15px; border-radius: 5px;">
@@ -21,44 +18,60 @@
         here</a>.
 </div>
 
-<body class="bg-gray-900 text-gray-100 font-sans p-8">
+<body class="bg-theme-bg-base text-gray-100 font-sans p-8">
 
     <div class="w-full mx-auto space-y-8">
-        <div class="border-b border-gray-700 pb-4">
-            <h1 class="text-3xl font-bold text-blue-400 mb-6">Tibialy</h1>
+        <div class="border-b border-theme-border-base pb-4">
+            <h1 class="text-3xl font-bold text-theme-accent-text mb-6 flex items-center gap-3">
+                <img src="/static/images/app_icon.png" alt="Tibialy Icon" class="w-8 h-8 object-contain">
+                <span>Tibialy</span>
+            </h1>
+
             <nav class="flex space-x-8">
                 <button id="nav-alarms" onclick="switchPage('alarms')"
-                    class="pb-2 text-lg font-semibold border-b-2 border-blue-500 text-blue-400 transition hover:text-blue-300">
+                    class="pb-2 text-lg font-semibold border-b-2 border-theme-accent-text text-theme-accent-text transition hover:opacity-80">
                     🔔 Alarms Tool
                 </button>
                 <button id="nav-discord" onclick="switchPage('discord')"
-                    class="pb-2 text-lg font-semibold border-b-2 border-transparent text-gray-400 transition hover:text-blue-300 hover:border-gray-500">
+                    class="pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light">
                     💬 Discord Tool
+                </button>
+                <button id="nav-settings" onclick="switchPage('settings')"
+                    class="pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light">
+                    ⚙️ Settings
                 </button>
             </nav>
         </div>
 
         {% include "partials/alarms.html" %}
         {% include "partials/discord.html" %}
+        {% include "partials/settings.html" %}
 
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h2 class="text-xl font-semibold mb-4 text-cyan-400">Active Timers</h2>
+        <div class="bg-theme-bg-panel p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-theme-accent-text">Active Timers</h2>
             <div id="timersContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <p class="text-gray-500 col-span-full">No active timers.</p>
+                <p class="text-theme-text-dim col-span-full">No active timers.</p>
             </div>
         </div>
-
     </div>
 
-    <div class="mt-8 w-full bg-black p-4 rounded-lg border border-gray-700 h-64 overflow-y-auto font-mono text-sm">
-        <h3 class="text-gray-400 mb-2 border-b border-gray-800 pb-1">Activity Log</h3>
-        <ul id="logWindow" class="space-y-1 text-green-300"></ul>
+    <div
+        class="relative mt-8 w-full bg-theme-bg-console p-4 rounded-lg border border-theme-border-base h-64 overflow-hidden font-mono text-sm flex flex-col">
+        <img src="/static/images/app_icon.png"
+            class="absolute right-4 top-1/2 transform -translate-y-1/2 mt-6 w-48 h-48 opacity-10 pointer-events-none z-0"
+            alt="">
+
+        <h3 class="relative z-10 text-theme-text-dim mb-2 border-b border-theme-border-dark pb-1 shrink-0">Activity Log
+        </h3>
+
+        <ul id="logWindow" class="relative z-10 space-y-1 text-theme-log-text overflow-y-auto h-full"></ul>
     </div>
 
     <script src="/static/js/core.js"></script>
     <script src="/static/js/alarms.js"></script>
     <script src="/static/js/discord.js"></script>
     <script src="/static/js/check_update.js"></script>
+    <script src="/static/js/theme_selector.js"></script>
     <footer style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #666;">
         <p>Version: {{ app_version }}</p>
     </footer>

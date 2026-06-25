@@ -3,19 +3,25 @@ let websocket = null;
 let activeJobs = [];
 
 function switchPage(pageId) {
-    // Hide all pages
+    // 1. Hide ALL pages (including settings)
     document.getElementById('page-alarms').classList.add('hidden');
     document.getElementById('page-discord').classList.add('hidden');
+    document.getElementById('page-settings').classList.add('hidden');
 
-    // Reset Nav styling
-    document.getElementById('nav-alarms').className = "pb-2 text-lg font-semibold border-b-2 border-transparent text-gray-400 transition hover:text-blue-300 hover:border-gray-500";
-    document.getElementById('nav-discord').className = "pb-2 text-lg font-semibold border-b-2 border-transparent text-gray-400 transition hover:text-blue-300 hover:border-gray-500";
+    // 2. Define Theme-Aware CSS Classes
+    const inactiveClass = "pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light";
+    const activeClass = "pb-2 text-lg font-semibold border-b-2 border-theme-accent-text text-theme-accent-text transition hover:opacity-80";
 
-    // Show selected page
+    // 3. Reset ALL nav buttons to inactive
+    document.getElementById('nav-alarms').className = inactiveClass;
+    document.getElementById('nav-discord').className = inactiveClass;
+    document.getElementById('nav-settings').className = inactiveClass;
+
+    // 4. Show selected page and set its nav button to active
     document.getElementById(`page-${pageId}`).classList.remove('hidden');
-    document.getElementById(`nav-${pageId}`).className = "pb-2 text-lg font-semibold border-b-2 border-blue-500 text-blue-400 transition hover:text-blue-300";
+    document.getElementById(`nav-${pageId}`).className = activeClass;
 
-    // Remember preference
+    // 5. Remember preference
     localStorage.setItem('tibialy_lastPage', pageId);
 }
 
@@ -32,7 +38,7 @@ function connectWebSocket() {
     if (websocket && (websocket.readyState === WebSocket.OPEN || websocket.readyState === WebSocket.CONNECTING)) return;
 
     websocket = new WebSocket(`ws://${window.location.host}/websocket/logs`);
-    websocket.onmessage = function(event) {
+    websocket.onmessage = function (event) {
         const data = JSON.parse(event.data);
         let localizedTime = new Date().toLocaleTimeString();
         if (data.timestamp) localizedTime = new Date(data.timestamp).toLocaleTimeString();
@@ -75,7 +81,7 @@ async function fetchJobs() {
     try {
         const response = await fetch('/api/jobs');
         if (response.ok) activeJobs = (await response.json()).jobs;
-    } catch (error) {}
+    } catch (error) { }
 }
 
 function cancelJob(jobId) {

@@ -1,0 +1,56 @@
+:root {
+    /* Backgrounds */
+    --bg-base: #2e3440;
+    --bg-panel: #3b4252;
+    --bg-input: #434c5e;
+    --bg-console: #242933;
+
+    /* Text */
+    --text-white: #eceff4;
+    --text-main: #e5e9f0;
+    --text-muted: #d8dee9;
+    --text-dim: #4c566a;
+
+    /* Borders */
+    --border-dark: #2e3440;
+    --border-base: #434c5e;
+    --border-light: #4c566a;
+
+    /* Accents */
+    --accent-text: #88c0d0;
+    /* Frost light blue */
+    --accent-bg: #81a1c1;
+    /* Frost medium blue */
+    --accent-hover: #5e81ac;
+    /* Frost dark blue */
+    --accent-focus: #88c0d0;
+    /* Frost light blue */
+
+    /* Logs */
+    --log-text: #a3be8c;
+    /* Aurora green */
+    --log-sys: #8fbcbb;
+    /* Aurora mint */
+
+    /* Specialized Tool Buttons */
+    --btn-plasma-ring-bg: #b48ead;
+    /* Nord Aurora Purple */
+    --btn-plasma-ring-hover: #c3a5be;
+
+    --btn-plasma-amulet-bg: #bf616a;
+    /* Nord Aurora Red/Pink */
+    --btn-plasma-amulet-hover: #cb7a81;
+
+    --btn-prismatic-ring-bg: #a3be8c;
+    /* Nord Aurora Green */
+    --btn-prismatic-ring-hover: #b3cb9f;
+
+    --btn-discord-bg: #5e81ac;
+    /* Nord Frost Dark Blue */
+    --btn-discord-hover: #81a1c1;
+    /* Nord Frost Light Blue */
+
+    --btn-custom-alarm-bg: #ebcb8b;
+    /* Nord Aurora Yellow */
+    --btn-custom-alarm-hover: #f0d8a6;
+}

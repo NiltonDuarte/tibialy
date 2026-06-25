@@ -1,0 +1,64 @@
+:root {
+    /* Backgrounds */
+    --bg-base: #140b0c;
+    /* Ultra-dark charcoal infused with crimson shadow */
+    --bg-panel: #241214;
+    /* Deep majestic burgundy-black */
+    --bg-input: #381c1f;
+    /* Burnished crimson-clay */
+    --bg-console: #0a0405;
+    /* Pure midnight shadow */
+
+    /* Text */
+    --text-white: #ffffff;
+    /* Pure brilliant white */
+    --text-main: #fcf6f6;
+    /* Crisp soft ivory */
+    --text-muted: #f5d6a1;
+    /* Pale gold-tinted cream */
+    --text-dim: #9e7f82;
+    /* Muted velvet rose gray */
+
+    /* Borders */
+    --border-dark: #0f0506;
+    --border-base: #4a2327;
+    /* Rich crimson-tinted borders */
+    --border-light: #6e3339;
+
+    /* Accents */
+    --accent-text: #ffc400;
+    /* Official Spanish Flag Gold (Gualda) */
+    --accent-bg: #c60b1e;
+    /* Official Spanish Flag Red (Rojo) */
+    --accent-hover: #e31126;
+    /* Vibrant Scarlet Battle Red */
+    --accent-focus: #ffdb4d;
+    /* Shimmering Sun Gold */
+
+    /* Logs */
+    --log-text: #ffc400;
+    /* Gold log entries */
+    --log-sys: #ffffff;
+    /* Pure white system alerts for high contrast */
+
+    /* Tool Buttons */
+    --btn-plasma-ring-bg: #990a18;
+    /* Deep Imperial Crimson */
+    --btn-plasma-ring-hover: #b30c1c;
+
+    --btn-plasma-amulet-bg: #c60b1e;
+    /* Official Flag Red */
+    --btn-plasma-amulet-hover: #e31126;
+
+    --btn-prismatic-ring-bg: #cca000;
+    /* Deep Burnished Gold (optimized for white text readability) */
+    --btn-prismatic-ring-hover: #e6b400;
+
+    --btn-discord-bg: #73050f;
+    /* Velvet Dark Scarlet */
+    --btn-discord-hover: #8c0612;
+
+    --btn-custom-alarm-bg: #b38600;
+    /* Darker Saffron Gold (optimized for white text readability) */
+    --btn-custom-alarm-hover: #cc9900;
+}

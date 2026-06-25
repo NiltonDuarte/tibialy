@@ -1,0 +1,62 @@
+:root {
+    /* Backgrounds */
+    --bg-base: #f9fafb;
+    /* gray-50 */
+    --bg-panel: #ffffff;
+    /* white */
+    --bg-input: #f3f4f6;
+    /* gray-100 */
+    --bg-console: #111827;
+    /* keep terminal dark for contrast */
+
+    /* Text */
+    --text-white: #111827;
+    /* inverted to dark for readability */
+    --text-main: #374151;
+    /* gray-700 */
+    --text-muted: #4b5563;
+    /* gray-600 */
+    --text-dim: #9ca3af;
+    /* gray-400 */
+
+    /* Borders */
+    --border-dark: #d1d5db;
+    /* gray-300 */
+    --border-base: #e5e7eb;
+    /* gray-200 */
+    --border-light: #f3f4f6;
+    /* gray-100 */
+
+    /* Accents */
+    --accent-text: #2563eb;
+    /* blue-600 */
+    --accent-bg: #2563eb;
+    /* blue-600 */
+    --accent-hover: #1d4ed8;
+    /* blue-700 */
+    --accent-focus: #60a5fa;
+    /* blue-400 */
+
+    /* Logs (rendered on the dark console) */
+    --log-text: #4ade80;
+    /* green-400 */
+    --log-sys: #22c55e;
+    /* green-500 */
+
+    --btn-plasma-ring-bg: #d2a2fe;
+    --btn-plasma-ring-hover: #e3c5ff;
+
+    --btn-plasma-amulet-bg: #d969ea;
+    --btn-plasma-amulet-hover: #cd40e0;
+
+    --btn-prismatic-ring-bg: #7063c1;
+    --btn-prismatic-ring-hover: #4e4cd0;
+
+    --btn-discord-bg: #6366f1;
+    --btn-discord-hover: #4f46e5;
+
+    --btn-custom-alarm-bg: #b9b096;
+
+    --btn-custom-alarm-hover: #e9d5a9;
+
+}

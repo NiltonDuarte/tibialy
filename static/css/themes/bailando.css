@@ -1,0 +1,66 @@
+:root {
+    /* Backgrounds */
+    --bg-base: #2c1d11;
+    /* Deep roasted coffee bean / Baileys espresso mix */
+    --bg-panel: #3d2b1d;
+    /* Lighter, creamy Baileys Irish cream liquor tone */
+    --bg-input: #503927;
+    /* Warm milk chocolate / coffee crust */
+    --bg-console: #1a0f08;
+    /* Darkest Ristretto black coffee base */
+
+    /* Text */
+    --text-white: #fffdf9;
+    /* Clean vanilla milky foam */
+    --text-main: #f5ebe0;
+    /* Creamy latte microfoam */
+    --text-muted: #e3d5ca;
+    /* Faded milk coffee tan */
+    --text-dim: #9c8470;
+    /* Dust of light cocoa/dry earth */
+
+    /* Borders */
+    --border-dark: #23160c;
+    /* Dark espresso ring */
+    --border-base: #503927;
+    /* Soft warm brown divider */
+    --border-light: #70543e;
+    /* Toasted cinnamon bark bark */
+
+    /* Accents */
+    --accent-text: #d4a373;
+    /* Rich warm cinnamon powder dust */
+    --accent-bg: #b07d62;
+    /* Ground nutmeg and cinnamon mix */
+    --accent-hover: #9c6644;
+    /* Deep rich spicy cinnamon bark */
+    --accent-focus: #e6ccb2;
+    /* Smooth Irish Cream froth glow */
+
+    /* Logs */
+    --log-text: #e6ccb2;
+    /* Sweet condensed milk logs */
+    --log-sys: #ddb892;
+    /* Creamy caramel alerts */
+
+    /* Tool Buttons */
+    --btn-plasma-ring-bg: #6f4e37;
+    /* Rich Classic Coffee Brown */
+    --btn-plasma-ring-hover: #7f5a3e;
+
+    --btn-plasma-amulet-bg: #8b5a2b;
+    /* Toasted Toffee / Dark Cinnamon Accent */
+    --btn-plasma-amulet-hover: #a06b3e;
+
+    --btn-prismatic-ring-bg: #9c6644;
+    /* Distinct Cinnamon Bark Brown */
+    --btn-prismatic-ring-hover: #b07d62;
+
+    --btn-discord-bg: #5c4033;
+    /* Cream-heavy Dark Cappuccino */
+    --btn-discord-hover: #6f4e37;
+
+    --btn-custom-alarm-bg: #cd853f;
+    /* Sweet Spiced Caramel / Peru Bean */
+    --btn-custom-alarm-hover: #de9b52;
+}

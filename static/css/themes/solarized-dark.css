@@ -1,0 +1,65 @@
+:root {
+    /* Backgrounds */
+    --bg-base: #002b36;
+    /* base03 */
+    --bg-panel: #073642;
+    /* base02 */
+    --bg-input: #001e26;
+    /* darker than base03 */
+    --bg-console: #00151a;
+    /* absolute darkest */
+
+    /* Text */
+    --text-white: #fdf6e3;
+    /* base3 */
+    --text-main: #839496;
+    /* base0 */
+    --text-muted: #93a1a1;
+    /* base1 */
+    --text-dim: #586e75;
+    /* base01 */
+
+    /* Borders */
+    --border-dark: #001e26;
+    --border-base: #586e75;
+    /* base01 */
+    --border-light: #657b83;
+    /* base00 */
+
+    /* Accents */
+    --accent-text: #268bd2;
+    /* blue */
+    --accent-bg: #2aa198;
+    /* cyan */
+    --accent-hover: #268bd2;
+    /* blue */
+    --accent-focus: #b58900;
+    /* yellow */
+
+    /* Logs */
+    --log-text: #859900;
+    /* green */
+    --log-sys: #2aa198;
+    /* cyan */
+
+    /* Specialized Tool Buttons */
+    --btn-plasma-ring-bg: #6c71c4;
+    /* Solarized Violet */
+    --btn-plasma-ring-hover: #858ae3;
+
+    --btn-plasma-amulet-bg: #d33682;
+    /* Solarized Magenta */
+    --btn-plasma-amulet-hover: #de5d9a;
+
+    --btn-prismatic-ring-bg: #859900;
+    /* Solarized Green */
+    --btn-prismatic-ring-hover: #9fb31a;
+
+    --btn-discord-bg: #268bd2;
+    /* Solarized Blue */
+    --btn-discord-hover: #4ea5e0;
+
+    --btn-custom-alarm-bg: #b58900;
+    /* Solarized Yellow */
+    --btn-custom-alarm-hover: #cb9b00;
+}

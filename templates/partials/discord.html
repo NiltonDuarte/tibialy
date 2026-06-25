@@ -1,84 +1,84 @@
-<div id="page-discord" class="hidden flex flex-col md:flex-row gap-8">
-    <div class="flex-1 bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col">
+<div id="page-discord" class="hidden flex flex-col md:flex-row gap-8 animate-fade-in">
+    <div class="flex-1 bg-theme-bg-panel p-6 rounded-lg shadow-lg flex flex-col">
         <h2 class="text-xl font-semibold mb-4 text-indigo-400">Discord Booking</h2>
         <div class="space-y-3 flex-grow">
             <div class="grid grid-cols-3 gap-3">
                 <div class="col-span-2">
-                    <label class="text-xs text-gray-400">Character</label>
+                    <label class="text-xs text-theme-text-dim">Character</label>
                     <input type="text" id="bookChar" list="characterList" onfocus="this.select()"
                         placeholder="e.g. Knighty"
-                        class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-indigo-400">
+                        class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus">
                     <datalist id="characterList"></datalist>
                 </div>
                 <div>
-                    <label class="text-xs text-gray-400">Start Time (Game)</label>
+                    <label class="text-xs text-theme-text-dim">Start Time (Game)</label>
                     <input type="time" id="bookStart" onchange="calculateEndHour()"
-                        class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-indigo-400 text-gray-200">
+                        class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus text-theme-text-main">
                 </div>
                 <div class="col-span-2">
-                    <label class="text-xs text-gray-400">Spot</label>
+                    <label class="text-xs text-theme-text-dim">Spot</label>
                     <input type="text" id="bookSpot" list="spotList" onfocus="this.select()"
                         placeholder="Select or type..."
-                        class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-indigo-400">
+                        class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus">
                     <datalist id="spotList"></datalist>
                 </div>
                 <div>
-                    <label class="text-xs text-gray-400">End Time (Game)</label>
+                    <label class="text-xs text-theme-text-dim">End Time (Game)</label>
                     <input type="time" id="bookEnd"
-                        class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-indigo-400 text-gray-200">
+                        class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus text-theme-text-main">
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3 pt-2 border-t border-gray-700 mt-2">
+            <div class="grid grid-cols-3 gap-3 pt-2 border-t border-theme-border-base mt-2">
                 <div class="col-span-2">
-                    <label class="text-xs text-gray-400">Execute Script At (Your Local Time)</label>
+                    <label class="text-xs text-theme-text-dim">Execute Script At (Your Local Time)</label>
                     <input type="datetime-local" id="discordTime" step="0.001"
-                        class="w-full p-2 bg-gray-700 rounded border border-gray-600 text-gray-200 focus:outline-none focus:border-indigo-400">
+                        class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-main focus:outline-none focus:border-theme-accent-focus">
                 </div>
                 <div class="col-span-1">
-                    <label class="text-xs text-gray-400">Message Count (Repeats)</label>
+                    <label class="text-xs text-theme-text-dim">Message Count (Repeats)</label>
                     <input type="number" id="bookCount" min="1" value="1"
-                        class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-indigo-400 text-gray-200">
+                        class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus text-theme-text-main">
                 </div>
             </div>
 
             <button onclick="scheduleDiscordBooking()"
-                class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded transition">
+                class="w-full mt-4 bg-theme-btn-discord-bg hover:bg-theme-btn-discord-hover text-theme-text-white font-bold py-2 px-4 rounded transition">
                 💬 Schedule Booking Message
             </button>
         </div>
     </div>
 
-    <div class="flex-1 bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col">
-        <h2 class="text-xl font-semibold mb-4 text-gray-300">Booking Database</h2>
+    <div class="flex-1 bg-theme-bg-panel p-6 rounded-lg shadow-lg flex flex-col">
+        <h2 class="text-xl font-semibold mb-4 text-theme-text-muted">Booking Database</h2>
         <div class="space-y-4 flex-grow flex flex-col">
             <div>
-                <label class="text-sm text-gray-400">Default Duration (Hours to Auto-Add)</label>
+                <label class="text-sm text-theme-text-dim">Default Duration (Hours to Auto-Add)</label>
                 <input type="number" id="dbDefaultDuration" onchange="autoSaveDb()" min="1"
-                    class="w-full p-2 mt-1 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-gray-400">
+                    class="w-full p-2 mt-1 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-gray-400">
             </div>
             <div class="grid grid-cols-2 gap-4 flex-grow">
                 <div class="flex flex-col h-48">
-                    <h3 class="text-sm text-gray-400 mb-1">Characters</h3>
+                    <h3 class="text-sm text-theme-text-dim mb-1">Characters</h3>
                     <div class="flex space-x-2 mb-2">
                         <input type="text" id="newCharInput" placeholder="Add Character"
-                            class="w-full p-1 text-sm bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-gray-400">
+                            class="w-full p-1 text-sm bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-gray-400">
                         <button onclick="addDbItem('characters', 'newCharInput')"
-                            class="bg-gray-600 hover:bg-gray-500 text-white px-2 rounded transition text-sm font-bold">+</button>
+                            class="bg-gray-600 hover:bg-gray-500 text-theme-text-white px-2 rounded transition text-sm font-bold">+</button>
                     </div>
                     <ul id="dbCharList"
-                        class="flex-grow space-y-1 text-sm bg-gray-900 p-2 rounded overflow-y-auto border border-gray-700">
+                        class="flex-grow space-y-1 text-sm bg-theme-bg-base p-2 rounded overflow-y-auto border border-theme-border-base">
                     </ul>
                 </div>
                 <div class="flex flex-col h-48">
-                    <h3 class="text-sm text-gray-400 mb-1">Spots</h3>
+                    <h3 class="text-sm text-theme-text-dim mb-1">Spots</h3>
                     <div class="flex space-x-2 mb-2">
                         <input type="text" id="newSpotInput" placeholder="Add Spot"
-                            class="w-full p-1 text-sm bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-gray-400">
+                            class="w-full p-1 text-sm bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-gray-400">
                         <button onclick="addDbItem('spots', 'newSpotInput')"
-                            class="bg-gray-600 hover:bg-gray-500 text-white px-2 rounded transition text-sm font-bold">+</button>
+                            class="bg-gray-600 hover:bg-gray-500 text-theme-text-white px-2 rounded transition text-sm font-bold">+</button>
                     </div>
                     <ul id="dbSpotList"
-                        class="flex-grow space-y-1 text-sm bg-gray-900 p-2 rounded overflow-y-auto border border-gray-700">
+                        class="flex-grow space-y-1 text-sm bg-theme-bg-base p-2 rounded overflow-y-auto border border-theme-border-base">
                     </ul>
                 </div>
             </div>

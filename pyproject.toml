@@ -43,11 +43,13 @@ build = "uv run python build.py"
 run = "uv run uvicorn src.main:app --reload"
 
 [tool.poe.tasks.publish-tag]
-help = "Create an annotated git tag and push it to origin"
+help = "Delete old tag if exists, create an annotated git tag, and push it to origin"
 args = [{ name = "version", positional = true, required = true, help = "The version tag to release (e.g. v1.0.0rc4)" }]
 sequence = [
-    "git tag -a ${version} -m 'Release version ${version}'",
-    "git push origin ${version}"
+    { shell = "git tag -d ${version} 2>/dev/null || true" },
+    { shell = "git push origin --delete ${version} 2>/dev/null || true" },
+    { shell = "git tag -a ${version} -m 'Release version ${version}'" },
+    { shell = "git push origin ${version}" }
 ]
 
 [build-system]
