@@ -3,7 +3,7 @@ import sys
 
 
 def main():
-    print("🚀 Starting build process...")
+    print("Starting build process...")
     command = [
         "pyinstaller",
         "--noconfirm",
@@ -36,9 +36,9 @@ def main():
     result = subprocess.run(command)
 
     if result.returncode == 0:
-        print("✅ Build successful! Check the 'dist' folder.")
+        print("Build successful! Check the 'dist' folder.")
     else:
-        print("❌ Build failed. See errors above.")
+        print("Build failed. See errors above.")
         sys.exit(1)
 
 
