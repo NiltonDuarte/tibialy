@@ -18,7 +18,6 @@ def setup_logging() -> None:
             structlog.processors.add_log_level,
             structlog.processors.TimeStamper(fmt="iso"),
             websocket_broadcaster,
-            # Explicitly force ConsoleRenderer to use our safe_stream object instead of sys.stdout
             structlog.dev.ConsoleRenderer(colors=is_a_tty),
         ],
         logger_factory=structlog.PrintLoggerFactory(file=safe_stream),

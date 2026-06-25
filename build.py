@@ -1,11 +1,17 @@
+import os
 import subprocess
 import sys
 
 
 def main():
     print("Starting build process...")
+
+    # Choose the correct separator dynamically (';' on Windows, ':' on Mac/Linux)
+    sep = os.pathsep
+
     command = [
         "pyinstaller",
+        "--onefile",
         "--noconfirm",
         "--name",
         "Tibialy",
@@ -16,15 +22,15 @@ def main():
         "--icon",
         "static/images/app_icon.png",
         "--add-data",
-        "static:static",
+        f"static{sep}static",
         "--add-data",
-        "database.yaml:.",
+        f"database.yaml{sep}.",
         "--add-data",
-        "templates:templates",
+        f"templates{sep}templates",
         "--exclude-module",
-        "PIL",  # <-- Block PIL
+        "PIL",
         "--exclude-module",
-        "Pillow",  # <-- Block Pillow
+        "Pillow",
         "--exclude-module",
         "setuptools",
         "--exclude-module",
@@ -32,7 +38,6 @@ def main():
         "src/main.py",
     ]
 
-    # Run the command and print the output live
     result = subprocess.run(command)
 
     if result.returncode == 0:
