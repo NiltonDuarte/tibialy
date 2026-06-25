@@ -8,7 +8,9 @@ logger = get_logger("tibialy.desktop")
 
 
 def start_desktop_app(app: FastAPI) -> None:
-    config = uvicorn.Config(app, host="127.0.0.1", port=8013, log_level="warning")
+    config = uvicorn.Config(
+        app, host="127.0.0.1", port=8013, log_level="warning", use_colors=False
+    )
     server = uvicorn.Server(config)
 
     server_thread = threading.Thread(target=server.run, daemon=True)
