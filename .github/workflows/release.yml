@@ -46,11 +46,11 @@ jobs:
           cd dist
           zip -r ../${{ matrix.artifact_name }} Tibialy.app
 
-      # On Windows, PyInstaller (without --onefile) creates a directory containing the .exe and DLLs.
+      # On Windows, PyInstaller (with --onefile) creates a single .exe file inside the dist folder.
       - name: Archive Windows App
         if: matrix.os == 'windows-latest'
         run: |
-          Compress-Archive -Path dist\Tibialy -DestinationPath ${{ matrix.artifact_name }}
+          Compress-Archive -Path dist\Tibialy.exe -DestinationPath ${{ matrix.artifact_name }}
 
       - name: Upload Artifacts to Release
         uses: softprops/action-gh-release@v2

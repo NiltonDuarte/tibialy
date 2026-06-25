@@ -42,6 +42,14 @@ compress = "uv run python scripts/compress_icon.py"
 build = "uv run python build.py"
 run = "uv run uvicorn src.main:app --reload"
 
+[tool.poe.tasks.publish-tag]
+help = "Create an annotated git tag and push it to origin"
+args = [{ name = "version", positional = true, required = true, help = "The version tag to release (e.g. v1.0.0rc4)" }]
+sequence = [
+    "git tag -a ${version} -m 'Release version ${version}'",
+    "git push origin ${version}"
+]
+
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
