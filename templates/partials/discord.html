@@ -28,11 +28,19 @@
                         class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-indigo-400 text-gray-200">
                 </div>
             </div>
-            <div class="pt-2 border-t border-gray-700 mt-2">
-                <label class="text-xs text-gray-400">Execute Script At (Your Local Time)</label>
-                <input type="datetime-local" id="discordTime" step="0.001"
-                    class="w-full p-2 bg-gray-700 rounded border border-gray-600 text-gray-200 focus:outline-none focus:border-indigo-400">
+            <div class="grid grid-cols-2 gap-3 pt-2 border-t border-gray-700 mt-2">
+                <div>
+                    <label class="text-xs text-gray-400">Execute Script At (Your Local Time)</label>
+                    <input type="datetime-local" id="discordTime" step="0.001"
+                        class="w-full p-2 bg-gray-700 rounded border border-gray-600 text-gray-200 focus:outline-none focus:border-indigo-400">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Message Count (Repeats)</label>
+                    <input type="number" id="bookCount" min="1" value="1"
+                        class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-indigo-400 text-gray-200">
+                </div>
             </div>
+
             <button onclick="scheduleDiscordBooking()"
                 class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded transition">
                 💬 Schedule Booking Message

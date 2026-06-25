@@ -12,5 +12,8 @@ def _send_sync(message: str):
     logger.info("discord_message_sent")
 
 
-async def send_discord_message(message: str):
-    await asyncio.to_thread(_send_sync, message)
+async def send_discord_message(message: str, count: int = 1):
+    for i in range(count - 1):
+        await asyncio.to_thread(_send_sync, message)
+        if i < count - 1:
+            await asyncio.sleep(10)

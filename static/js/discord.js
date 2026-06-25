@@ -9,7 +9,7 @@ async function fetchYamlDb() {
             document.getElementById('dbDefaultDuration').value = yamlDb.default_duration_hours;
             renderDbLists();
         }
-    } catch(e) {}
+    } catch (e) { }
 }
 
 function renderDbLists() {
@@ -75,6 +75,7 @@ function scheduleDiscordBooking() {
     const start = document.getElementById('bookStart').value;
     const end = document.getElementById('bookEnd').value;
     const time = document.getElementById('discordTime').value;
+    const count = parseInt(document.getElementById('bookCount').value) || 1;
 
     if (!char || !spot || !start || !end || !time) {
         logAction("Error: All booking fields and execution time are required.");
@@ -87,7 +88,14 @@ function scheduleDiscordBooking() {
 
     triggerEndpoint('/discord/schedule', {
         method: 'POST',
-        body: JSON.stringify({ character: char, spot: spot, start_hour: start, end_hour: end, trigger_time: time })
+        body: JSON.stringify({
+            character: char,
+            spot: spot,
+            start_hour: start,
+            end_hour: end,
+            trigger_time: time,
+            message_count: count
+        })
     }).then(() => {
         setTimeout(fetchYamlDb, 500);
     });

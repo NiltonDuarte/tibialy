@@ -1,7 +1,5 @@
 default_duration_hours: 2
-characters:
-- Goudeen Heavyhand
-- test
+characters: []
 spots:
 - Castle Catacombs -3
 - Castle Catacombs -4

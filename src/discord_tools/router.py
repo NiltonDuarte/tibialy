@@ -17,6 +17,7 @@ class ScheduleRequest(BaseModel):
     start_hour: str
     end_hour: str
     trigger_time: datetime
+    message_count: int = 1
 
 
 class ConfigModel(BaseModel):
@@ -60,20 +61,19 @@ def schedule_booking(req: ScheduleRequest):
         save_db(db)
 
     # Construct the final template string
-    today_str = datetime.now().strftime("%Y-%m-%d")
+    today_str = datetime.now().strftime("%d.%m.%Y")
     message = f"/book character:{req.character} spot:{req.spot} date:{today_str} start:{req.start_hour} end:{req.end_hour}"
 
     scheduler.add_job(
         send_discord_message,
         "date",
         run_date=req.trigger_time,
-        args=[message],
+        args=[message, req.message_count],
         misfire_grace_time=1,
     )
     logger.info(
         "discord_booking_scheduled",
-        trigger_time=req.trigger_time.isoformat(),
-        character=req.character,
-        spot=req.spot,
+        message=message,
+        message_count=req.message_count,
     )
     return {"status": "Discord booking scheduled"}
