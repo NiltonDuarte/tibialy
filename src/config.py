@@ -11,8 +11,6 @@ if getattr(sys, "frozen", False):
 else:
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-print(f"{BASE_DIR=}")
 STATIC_PATH = os.path.join(BASE_DIR, "static")
 TEMPLATES_PATH = os.path.join(BASE_DIR, "templates")
 GITHUB_REPO = "NiltonDuarte/tibialy"

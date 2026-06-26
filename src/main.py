@@ -1,42 +1,4 @@
-import asyncio
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from contextlib import asynccontextmanager
-
-from src.core.scheduler import scheduler
-from src.core.logger import get_logger
-from src.core.websocket import router as websocket_router, get_websocket_manager
-from src.config import STATIC_PATH
-from src.alarms.router import router as alarms_router
-from src.discord_tools.router import router as discord_router
-from src.jobs import router as jobs_router
-from src.update_check import router as system_router
-from src.ui import router as ui_router
 from src.desktop_launcher import start_desktop_app
 
-logger = get_logger("tibialy.main")
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    manager = get_websocket_manager()
-    manager.loop = asyncio.get_running_loop()
-    logger.info("scheduler_starting")
-    scheduler.start()
-    yield
-    logger.info("scheduler_shutting_down")
-    scheduler.shutdown()
-
-
-app = FastAPI(lifespan=lifespan, title="Tibialy")
-app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
-
-app.include_router(ui_router)
-app.include_router(jobs_router)
-app.include_router(system_router)
-app.include_router(websocket_router)
-app.include_router(alarms_router)
-app.include_router(discord_router)
-
 if __name__ == "__main__":
-    start_desktop_app(app)
+    start_desktop_app()

@@ -40,7 +40,7 @@ version-file = "src/_version.py"
 [tool.poe.tasks]
 compress = "uv run python scripts/compress_icon.py"
 build = "uv run python build.py"
-run = "uv run uvicorn src.main:app --reload"
+run = "uv run uvicorn src.app:app --reload"
 
 [tool.poe.tasks.publish-tag]
 help = "Delete old tag if exists, create an annotated git tag, and push it to origin"

@@ -71,8 +71,6 @@ def get_db_path() -> Path:
 # Initialize the safe path immediately
 DB_PATH = get_db_path()
 
-print(DB_PATH)
-
 
 def load_db() -> dict:
     data = {}

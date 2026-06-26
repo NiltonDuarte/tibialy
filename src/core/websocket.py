@@ -61,7 +61,7 @@ def websocket_broadcaster(
 
     if not manager.active_connections:
         print(
-            f"\n[FATAL ERROR] Broadcast aborted: No active UI connections to receive log -> {event_dict.get('event')}"
+            f"\n[WARNING] Broadcast aborted: No active UI connections to receive log -> {event_dict.get('event')}"
         )
         return event_dict
 
