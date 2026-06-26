@@ -36,6 +36,14 @@
                     class="pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light">
                     💬 Discord Tool
                 </button>
+                <button id="nav-imbuements" onclick="switchPage('imbuements')"
+                    class="pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light">
+                    💎 Imbuement
+                </button>
+                <button id="nav-stamina" onclick="switchPage('stamina')"
+                    class="pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light">
+                    ⚡ Stamina Tracker
+                </button>
                 <button id="nav-settings" onclick="switchPage('settings')"
                     class="pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light">
                     ⚙️ Settings
@@ -45,6 +53,8 @@
 
         {% include "partials/alarms.html" %}
         {% include "partials/discord.html" %}
+        {% include "partials/imbuements.html" %}
+        {% include "partials/stamina.html" %}
         {% include "partials/settings.html" %}
 
         <div class="bg-theme-bg-panel p-6 rounded-lg shadow-lg">

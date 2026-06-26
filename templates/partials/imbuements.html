@@ -1,0 +1,171 @@
+<div id="page-imbuements" class="hidden animate-fade-in">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-theme-bg-panel p-6 rounded-lg border border-theme-border-base shadow-lg">
+                <h2 class="text-xl font-bold text-theme-accent-text mb-4 flex items-center gap-2">
+                    🛡️ Optimizer Configuration
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-semibold text-theme-text-muted block mb-1">Imbuement Preset</label>
+                        <select id="imbPreset" onchange="applyImbPreset()"
+                            class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-white focus:outline-none focus:border-theme-accent-focus cursor-pointer">
+                            <option value="strike">Powerful Strike (Critical Hit)</option>
+                            <option value="vampirism">Powerful Vampirism (Life Leech)</option>
+                            <option value="void">Powerful Void (Mana Leech)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-theme-text-muted block mb-1">Gold Token Market Price
+                            (ea)</label>
+                        <input id="priceToken" type="number" value="40000" oninput="calculateImbuement()"
+                            class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-white focus:outline-none focus:border-theme-accent-focus">
+                    </div>
+                </div>
+
+                <hr class="border-theme-border-light my-6">
+
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-theme-text-main tracking-wide uppercase">Creature Product
+                        Requirements</h3>
+
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center bg-theme-bg-input/30 p-3 rounded border border-theme-border-light/50">
+                        <div>
+                            <span class="text-xs font-bold px-2 py-0.5 bg-gray-700 rounded text-gray-200">Tier 1</span>
+                            <span id="nameT1" class="text-sm font-semibold text-theme-text-main ml-2">Protective
+                                Hair</span>
+                        </div>
+                        <div class="text-xs text-theme-text-dim md:text-center">Required: <span id="countT1">25</span>x
+                        </div>
+                        <div>
+                            <input id="priceT1" type="number" value="1200" oninput="calculateImbuement()"
+                                class="w-full p-1.5 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-white text-right focus:outline-none focus:border-theme-accent-focus">
+                        </div>
+                    </div>
+
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center bg-theme-bg-input/30 p-3 rounded border border-theme-border-light/50">
+                        <div>
+                            <span class="text-xs font-bold px-2 py-0.5 bg-purple-900 rounded text-purple-200">Tier
+                                2</span>
+                            <span id="nameT2" class="text-sm font-semibold text-theme-text-main ml-2">Sabretooth</span>
+                        </div>
+                        <div class="text-xs text-theme-text-dim md:text-center">Required: <span id="countT2">25</span>x
+                        </div>
+                        <div>
+                            <input id="priceT2" type="number" value="4500" oninput="calculateImbuement()"
+                                class="w-full p-1.5 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-white text-right focus:outline-none focus:border-theme-accent-focus">
+                        </div>
+                    </div>
+
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center bg-theme-bg-input/30 p-3 rounded border border-theme-border-light/50">
+                        <div>
+                            <span class="text-xs font-bold px-2 py-0.5 bg-red-900 rounded text-red-200">Tier 3</span>
+                            <span id="nameT3" class="text-sm font-semibold text-theme-text-main ml-2">Vexclaw
+                                Talon</span>
+                        </div>
+                        <div class="text-xs text-theme-text-dim md:text-center">Required: <span id="countT3">5</span>x
+                        </div>
+                        <div>
+                            <input id="priceT3" type="number" value="12000" oninput="calculateImbuement()"
+                                class="w-full p-1.5 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-white text-right focus:outline-none focus:border-theme-accent-focus">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div
+                class="bg-theme-bg-panel p-6 rounded-lg border border-theme-border-base shadow-lg flex flex-col h-full justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-theme-text-white mb-4">📈 Cost Efficiency Analysis</h2>
+
+                    <div class="space-y-4">
+                        <div class="p-4 bg-theme-bg-input rounded border border-theme-border-light">
+                            <div class="text-xs text-theme-text-dim uppercase tracking-wider">Total Creature Products
+                                Cost</div>
+                            <div id="outMarketTotal" class="text-2xl font-bold text-theme-text-main mt-1">0 gp</div>
+                        </div>
+
+                        <div class="p-4 bg-theme-bg-input rounded border border-theme-border-light">
+                            <div class="text-xs text-theme-text-dim uppercase tracking-wider">Total Gold Token Method
+                                Cost</div>
+                            <div id="outTokenTotal" class="text-2xl font-bold text-theme-text-main mt-1">0 gp</div>
+                        </div>
+
+                        <div
+                            class="p-4 rounded border border-dashed flex flex-col justify-center border-theme-accent-focus bg-theme-accent-bg/10">
+                            <div class="text-xs text-theme-accent-text uppercase font-bold tracking-wider">💡
+                                Recommendation</div>
+                            <div id="outRecommendation" class="text-base font-semibold text-theme-text-white mt-1">
+                                Calculating...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-theme-border-light space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-theme-text-muted">Shrine Fixed Fee (100%):</span>
+                        <span class="text-theme-text-main font-semibold">150,000 gp</span>
+                    </div>
+                    <div class="flex justify-between text-base border-t border-theme-border-light pt-2">
+                        <span class="text-theme-text-white font-bold">Total Final Cost:</span>
+                        <span id="outAbsoluteTotal" class="text-theme-accent-text font-bold text-lg">150,000 gp</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-theme-text-dim">
+                        <span>Cost Per Active Hour (20h total):</span>
+                        <span id="outPerHour" class="font-mono">0 gp/h</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8 bg-theme-bg-panel p-6 rounded-lg border border-theme-border-base shadow-lg">
+        <div
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-theme-border-light">
+            <div>
+                <h2 class="text-xl font-bold text-theme-accent-text flex items-center gap-2">
+                    🛒 Market Shopping List Tracker
+                </h2>
+                <p class="text-xs text-theme-text-dim mt-0.5">
+                    Select imbuements you plan to buy materials for. Type the number of items you need to pick up from
+                    the market.
+                </p>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0 w-full md:w-auto">
+                <select id="trackSelector" onchange="addTrackedImbuement()" class="w-full md:w-64 p-2 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-white focus:outline-none focus:border-theme-accent-focus text-sm cursor-pointer">
+                    <option value="" disabled selected hidden>➕ Add imbuement to track...</option>
+                    <optgroup label="Core Attributes & Utilities">
+                        <option value="epiphany">🔮 Magic Level (Epiphany)</option>
+                        <option value="precision">🎯 Distance Fighting (Precision)</option>
+                        <option value="slash">⚔️ Sword Fighting (Slash)</option>
+                        <option value="chop">🪓 Axe Fighting (Chop)</option>
+                        <option value="bash">🔨 Club Fighting (Bash)</option>
+                        <option value="punch">👊 Fist Fighting (Punch)</option>
+                        <option value="featherweight">🎒 Total Capacity (Featherweight)</option>
+                    </optgroup>
+                    <optgroup label="Elemental Combat Resists">
+                        <option value="dragonhide">🔥 Fire Resist (Dragon Hide)</option>
+                        <option value="quarascale">❄️ Ice Resist (Quara Scale)</option>
+                        <option value="cloudfabric">⚡ Energy Resist (Cloud Fabric)</option>
+                        <option value="snakeskin">🌿 Earth Resist (Snake Skin)</option>
+                        <option value="lichshroud">💀 Death Resist (Lich Shroud)</option>
+                        <option value="demonpresence">☀️ Holy Resist (Demon Presence)</option>
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+
+        <div id="trackedListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/imbuements.js"></script>

@@ -1,0 +1,96 @@
+<div id="page-stamina" class="hidden animate-fade-in">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <div class="bg-theme-bg-panel p-6 rounded-lg border border-theme-border-base shadow-lg h-fit">
+            <h2 class="text-xl font-bold text-theme-accent-text mb-2 flex items-center gap-2">
+                ⏳ Stamina Regeneration Tracker
+            </h2>
+            <p class="text-xs text-theme-text-dim mb-6">
+                Input your character's current stamina value exactly as it appeared when logging out to start tracking
+                real-time regeneration.
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-semibold text-theme-text-muted block mb-1">Logout Stamina Value
+                        (HH:MM)</label>
+                    <div class="flex items-center gap-2">
+                        <input id="staminaHours" type="number" min="0" max="42" value="42"
+                            class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-white text-center text-lg font-mono focus:outline-none focus:border-theme-accent-focus"
+                            placeholder="HH">
+                        <span class="text-theme-text-muted font-bold text-xl">:</span>
+                        <input id="staminaMins" type="number" min="0" max="59" value="00"
+                            class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-white text-center text-lg font-mono focus:outline-none focus:border-theme-accent-focus"
+                            placeholder="MM">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 py-2">
+                    <input id="staminaPenalty" type="checkbox" checked
+                        class="w-4 h-4 bg-theme-bg-input border border-theme-border-light rounded text-theme-accent-bg focus:ring-0 focus:ring-offset-0 cursor-pointer">
+                    <label for="staminaPenalty"
+                        class="text-xs font-semibold text-theme-text-main cursor-pointer select-none">
+                        Apply 10-minute logout latency delay
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button onclick="saveAndTrackStamina()"
+                        class="w-full p-2.5 bg-theme-accent-bg hover:bg-theme-accent-hover text-theme-text-white font-bold rounded text-sm transition shadow tracking-wide">
+                        ⚡ Start Tracking
+                    </button>
+                    <button onclick="clearStaminaTracker()"
+                        class="w-full p-2.5 bg-theme-bg-input hover:bg-theme-border-dark text-theme-text-muted font-bold rounded text-sm transition border border-theme-border-light">
+                        ✕ Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="activeTrackerBox"
+            class="lg:col-span-2 bg-theme-bg-panel p-6 rounded-lg border border-theme-border-base shadow-lg flex flex-col justify-between hidden">
+            <div>
+                <h3 class="text-sm font-bold text-theme-text-white uppercase tracking-wider mb-6">📡 Active Offline
+                    Simulation</h3>
+
+                <div
+                    class="flex flex-col items-center justify-center py-6 bg-theme-bg-console rounded-lg border border-theme-border-dark shadow-inner text-center">
+                    <div class="text-[11px] uppercase text-theme-text-dim tracking-widest font-semibold mb-2">Estimated
+                        Current Stamina</div>
+                    <div id="liveStaminaClock" class="text-5xl font-mono font-bold text-green-400 tracking-tight">42:00
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-theme-border-light">
+                <div
+                    class="p-4 bg-theme-bg-input/40 rounded border border-theme-border-light/60 flex flex-col justify-between min-h-[85px]">
+                    <div>
+                        <div class="text-[11px] uppercase text-theme-text-dim font-bold tracking-wider">Ready for Orange
+                            Cap (39:00)</div>
+                        <div id="targetOrangeTime" class="text-sm font-semibold text-theme-text-main mt-1 font-mono">
+                            Calculating...</div>
+                    </div>
+                    <div id="countdownOrange"
+                        class="text-xs text-theme-accent-text font-semibold mt-1.5 font-mono border-t border-theme-border-light/30 pt-1">
+                        Calculating countdown...</div>
+                </div>
+                <div
+                    class="p-4 bg-theme-bg-input/40 rounded border border-theme-border-light/60 flex flex-col justify-between min-h-[85px]">
+                    <div>
+                        <div class="text-[11px] uppercase text-theme-text-dim font-bold tracking-wider">Fully
+                            Regenerated (42:00)</div>
+                        <div id="targetGreenTime" class="text-sm font-semibold text-theme-text-main mt-1 font-mono">
+                            Calculating...</div>
+                    </div>
+                    <div id="countdownGreen"
+                        class="text-xs text-theme-accent-text font-semibold mt-1.5 font-mono border-t border-theme-border-light/30 pt-1">
+                        Calculating countdown...</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="/static/js/stamina.js"></script>

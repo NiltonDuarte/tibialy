@@ -1,27 +1,28 @@
 // --- SYSTEM GLOBALS & NAVIGATION ---
 let websocket = null;
 let activeJobs = [];
-
 function switchPage(pageId) {
-    // 1. Hide ALL pages (including settings)
+    // Hide ALL page viewports
     document.getElementById('page-alarms').classList.add('hidden');
     document.getElementById('page-discord').classList.add('hidden');
+    document.getElementById('page-imbuements').classList.add('hidden');
+    document.getElementById('page-stamina').classList.add('hidden');
     document.getElementById('page-settings').classList.add('hidden');
 
-    // 2. Define Theme-Aware CSS Classes
     const inactiveClass = "pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light";
     const activeClass = "pb-2 text-lg font-semibold border-b-2 border-theme-accent-text text-theme-accent-text transition hover:opacity-80";
 
-    // 3. Reset ALL nav buttons to inactive
+    // Reset styles on buttons
     document.getElementById('nav-alarms').className = inactiveClass;
     document.getElementById('nav-discord').className = inactiveClass;
+    document.getElementById('nav-imbuements').className = inactiveClass;
+    document.getElementById('nav-stamina').className = inactiveClass;
     document.getElementById('nav-settings').className = inactiveClass;
 
-    // 4. Show selected page and set its nav button to active
+    // Set target elements visible
     document.getElementById(`page-${pageId}`).classList.remove('hidden');
     document.getElementById(`nav-${pageId}`).className = activeClass;
 
-    // 5. Remember preference
     localStorage.setItem('tibialy_lastPage', pageId);
 }
 
