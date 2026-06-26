@@ -1,9 +1,17 @@
-<div id="page-utilities" class="hidden animate-fade-in">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div id="page-utilities" class="hidden animate-fade-in space-y-8">
 
+    <div class="mb-4">
+        <h1 class="text-2xl font-bold text-theme-text-white flex items-center gap-2">
+            🛠️ Game Utilities & Calculators
+        </h1>
+        <p class="text-sm text-theme-text-dim mt-1">A collection of tools to track resources and manage party sessions.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="bg-theme-bg-panel p-6 rounded-lg border border-theme-border-base shadow-lg h-fit">
-            <h2 class="text-xl font-bold text-theme-accent-text mb-2 flex items-center gap-2">
-                ⏳ Stamina Regeneration Tracker
+            <h2 class="text-lg font-bold text-theme-accent-text mb-2 flex items-center gap-2">
+                ⏳ Stamina Tracker
             </h2>
             <p class="text-xs text-theme-text-dim mb-6">
                 Input your character's current stamina value exactly as it appeared when logging out to start tracking
@@ -12,8 +20,7 @@
 
             <div class="space-y-4">
                 <div>
-                    <label class="text-xs font-semibold text-theme-text-muted block mb-1">Logout Stamina Value
-                        (HH:MM)</label>
+                    <label class="text-xs font-semibold text-theme-text-muted block mb-1">Logout Stamina (HH:MM)</label>
                     <div class="flex items-center gap-2">
                         <input id="staminaHours" type="number" min="0" max="42" value="42"
                             class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-white text-center text-lg font-mono focus:outline-none focus:border-theme-accent-focus"
@@ -37,7 +44,7 @@
                 <div class="grid grid-cols-2 gap-2 pt-2">
                     <button onclick="saveAndTrackStamina()"
                         class="w-full p-2.5 bg-theme-accent-bg hover:bg-theme-accent-hover text-theme-text-white font-bold rounded text-sm transition shadow tracking-wide">
-                        ⚡ Start Tracking
+                        ⚡ Track
                     </button>
                     <button onclick="clearStaminaTracker()"
                         class="w-full p-2.5 bg-theme-bg-input hover:bg-theme-border-dark text-theme-text-muted font-bold rounded text-sm transition border border-theme-border-light">
@@ -89,6 +96,68 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 border-t border-theme-border-light pt-8">
+        <div class="bg-theme-bg-panel p-6 rounded-lg border border-theme-border-base shadow-lg h-fit">
+            <h2 class="text-lg font-bold text-theme-accent-text mb-2 flex items-center gap-2">
+                💰 Party Loot Splitter
+            </h2>
+            <p class="text-xs text-theme-text-dim mb-4">
+                Paste your in-game Party Hunt log here to instantly calculate profit splits and bank transfers.
+            </p>
+
+            <textarea id="lootInput"
+                class="w-full h-48 p-3 bg-theme-bg-console text-theme-text-white font-mono text-xs rounded border border-theme-border-dark focus:outline-none focus:border-theme-accent-focus resize-none mb-4 whitespace-pre"
+                spellcheck="false"
+                placeholder="Session data: From 2026-06-26...&#10;Loot Type: Market&#10;Loot: 1,500,000&#10;Supplies: 300,000&#10;..."></textarea>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="analyzeLoot()"
+                    class="w-full p-2.5 bg-theme-accent-bg hover:bg-theme-accent-hover text-theme-text-white font-bold rounded text-sm transition shadow tracking-wide">
+                    📊 Analyze
+                </button>
+                <button
+                    onclick="document.getElementById('lootInput').value = ''; document.getElementById('lootOutputBox').classList.add('hidden');"
+                    class="w-full p-2.5 bg-theme-bg-input hover:bg-theme-border-dark text-theme-text-muted font-bold rounded text-sm transition border border-theme-border-light">
+                    ✕ Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="lootOutputBox" class="lg:col-span-2 bg-theme-bg-panel p-6 rounded-lg border border-theme-border-base shadow-lg flex flex-col hidden">
+            <h3 class="text-sm font-bold text-theme-text-white uppercase tracking-wider mb-4 border-b border-theme-border-light pb-2">🧾 Split Analysis</h3>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center">
+                <div class="p-3 bg-theme-bg-input/30 rounded border border-theme-border-light/50">
+                    <div class="text-[10px] uppercase text-theme-text-dim font-bold tracking-wider">Duration</div>
+                    <div id="outDuration" class="text-lg font-semibold text-theme-text-white mt-1 font-mono">00:00h</div>
+                </div>
+                <div class="p-3 bg-theme-bg-input/30 rounded border border-theme-border-light/50">
+                    <div class="text-[10px] uppercase text-theme-text-dim font-bold tracking-wider">Total Balance</div>
+                    <div id="outTotalBalance" class="text-lg font-semibold text-theme-text-white mt-1 font-mono">0</div>
+                </div>
+                <div class="p-3 bg-theme-bg-input/30 rounded border border-theme-border-light/50">
+                    <div class="text-[10px] uppercase text-theme-text-dim font-bold tracking-wider">Profit Per Player</div>
+                    <div id="outPerPlayer" class="text-lg font-semibold text-green-400 mt-1 font-mono">0</div>
+                </div>
+                <div class="p-3 bg-theme-bg-input/30 rounded border border-theme-border-light/50">
+                    <div class="text-[10px] uppercase text-theme-text-dim font-bold tracking-wider">Group Status</div>
+                    <div id="outStatus" class="text-lg font-bold text-theme-accent-text mt-1 uppercase">Profit</div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div class="text-[11px] uppercase text-theme-text-dim font-bold tracking-wider mb-3">💸 Bank Transfers Required</div>
+                <div id="transferInstructions" class="space-y-2 text-sm">
+                    </div>
+            </div>
+
+            <div class="flex-grow border-t border-theme-border-light pt-6">
+                <div class="text-[11px] uppercase text-theme-text-dim font-bold tracking-wider mb-3">🛡️ Player Performance</div>
+                <div id="playerStatsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    </div>
+            </div>
+        </div>
     </div>
 </div>
