@@ -1,0 +1,26 @@
+[
+    {
+        "id": "def_imbue",
+        "text": "Imbuements/Scrolls sufficient"
+    },
+    {
+        "id": "def_supplies",
+        "text": "(Skill)Potions/Runes/Ammunition refilled"
+    },
+    {
+        "id": "def_cap",
+        "text": "Capacity cleared (Loot/Gold)"
+    },
+    {
+        "id": "def_rings",
+        "text": "Skill/Prismatic/SilverToken ring refilled"
+    },
+    {
+        "id": "def_amulet",
+        "text": "Plasma/SilverToken amulet refilled"
+    },
+    {
+        "id": "def_sio",
+        "text": "Exura Sio target updated"
+    }
+]

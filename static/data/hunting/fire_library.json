@@ -27,7 +27,7 @@
             "alt": "Dodge"
         }
     },
-    "route_image": "",
+    "route_image": "static/data/hunting/library.png",
     "creatures": [
         {
             "name": "Burning Book",

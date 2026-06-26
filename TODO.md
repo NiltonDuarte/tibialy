@@ -1,7 +1,3 @@
-hunting ground
-dmg dealt, damage taken, charms, route
-summary of creatures weakness,
-
 Party Loot Splitter & Analyzer
 
 

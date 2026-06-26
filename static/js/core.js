@@ -6,8 +6,9 @@ function switchPage(pageId) {
     document.getElementById('page-alarms').classList.add('hidden');
     document.getElementById('page-discord').classList.add('hidden');
     document.getElementById('page-imbuements').classList.add('hidden');
-    document.getElementById('page-stamina').classList.add('hidden');
+    document.getElementById('page-utilities').classList.add('hidden');
     document.getElementById('page-settings').classList.add('hidden');
+    document.getElementById('page-hunting').classList.add('hidden');
 
     const inactiveClass = "pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light";
     const activeClass = "pb-2 text-lg font-semibold border-b-2 border-theme-accent-text text-theme-accent-text transition hover:opacity-80";
@@ -16,8 +17,10 @@ function switchPage(pageId) {
     document.getElementById('nav-alarms').className = inactiveClass;
     document.getElementById('nav-discord').className = inactiveClass;
     document.getElementById('nav-imbuements').className = inactiveClass;
-    document.getElementById('nav-stamina').className = inactiveClass;
+    document.getElementById('nav-utilities').className = inactiveClass;
     document.getElementById('nav-settings').className = inactiveClass;
+    document.getElementById('nav-hunting').className = inactiveClass;
+
 
     // Set target elements visible
     document.getElementById(`page-${pageId}`).classList.remove('hidden');

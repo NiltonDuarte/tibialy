@@ -44,9 +44,9 @@
                     class="pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light">
                     💎 Imbuement
                 </button>
-                <button id="nav-stamina" onclick="switchPage('stamina')"
+                <button id="nav-utilities" onclick="switchPage('utilities')"
                     class="pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light">
-                    ⚡ Stamina Tracker
+                    🛠️ Utilities
                 </button>
                 <button id="nav-settings" onclick="switchPage('settings')"
                     class="pb-2 text-lg font-semibold border-b-2 border-transparent text-theme-text-dim transition hover:text-theme-accent-text hover:border-theme-border-light">
@@ -58,7 +58,7 @@
         {% include "partials/alarms.html" %}
         {% include "partials/discord.html" %}
         {% include "partials/imbuements.html" %}
-        {% include "partials/stamina.html" %}
+        {% include "partials/utilities.html" %}
         {% include "partials/settings.html" %}
         {% include "partials/hunting.html" %}
 
@@ -88,6 +88,8 @@
     <script src="/static/js/check_update.js"></script>
     <script src="/static/js/settings.js"></script>
     <script src="/static/js/hunting.js"></script>
+    <script src="/static/js/stamina.js"></script>
+
     <footer style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #666;">
         <p>Version: {{ app_version }}</p>
     </footer>

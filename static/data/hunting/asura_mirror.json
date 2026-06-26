@@ -1,6 +1,6 @@
 {
-    "id": "asura_palace",
-    "name": "Asura Palace",
+    "id": "asura_mirror",
+    "name": "Asura Mirror",
     "overall_summary": {
         "damage_dealt": [
             "Fire",
@@ -16,7 +16,7 @@
         "Dawnfire Asura": "Freeze",
         "Midnight Asura": "Divine Wrath"
     },
-    "route_image": "",
+    "route_image": "static/data/hunting/asura_mirror.png",
     "creatures": [
         {
             "name": "Dawnfire Asura",
