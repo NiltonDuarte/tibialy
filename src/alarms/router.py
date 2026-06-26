@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
 import pyttsx3
+from src.config import APP_STATE
 from src.core.scheduler import scheduler
 from src.core.logger import get_logger
 
@@ -13,6 +14,8 @@ def trigger_alarm(name: str):
     try:
         engine = pyttsx3.init()
         engine.setProperty("rate", 160)
+        current_volume = APP_STATE.get("alarm_volume", 1.0)
+        engine.setProperty("volume", current_volume)
         announcement = f"Attention, {name}."
         engine.say(announcement)
         engine.runAndWait()

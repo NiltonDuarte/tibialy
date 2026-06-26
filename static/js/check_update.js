@@ -1,6 +1,6 @@
 window.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('/api/update-check');
+        const response = await fetch('/api/system/update-check');
         const data = await response.json();
 
         if (data.update_available) {

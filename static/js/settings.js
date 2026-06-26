@@ -1,3 +1,31 @@
+function updateVolumeLabel(val) {
+    document.getElementById('volumeLabel').innerText = val + '%';
+}
+async function saveVolumeSetting(val) {
+    localStorage.setItem('tibialy_alarm_volume', val);
+
+    const floatVol = parseInt(val) / 100.0;
+
+    // 3. Sync with Python backend using your global endpoint wrapper
+    await triggerEndpoint('/api/system/volume', {
+        body: JSON.stringify({ volume: floatVol })
+    });
+}
+
+// Restore saved settings on mount
+document.addEventListener("DOMContentLoaded", () => {
+    const savedVol = localStorage.getItem('tibialy_alarm_volume') || 100;
+    const volSlider = document.getElementById('alarmVolume');
+
+    if (volSlider) {
+        volSlider.value = savedVol;
+        updateVolumeLabel(savedVol);
+
+        // Push the cached value to the backend immediately on boot
+        saveVolumeSetting(savedVol);
+    }
+});
+
 
 // --- Dynamic Theme Loading ---
 async function loadThemes() {

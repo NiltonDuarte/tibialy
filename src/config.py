@@ -14,3 +14,5 @@ else:
 STATIC_PATH = os.path.join(BASE_DIR, "static")
 TEMPLATES_PATH = os.path.join(BASE_DIR, "templates")
 GITHUB_REPO = "NiltonDuarte/tibialy"
+
+APP_STATE = {"alarm_volume": 1.0}

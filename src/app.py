@@ -10,7 +10,7 @@ from src.config import STATIC_PATH
 from src.alarms.router import router as alarms_router
 from src.discord_tools.router import router as discord_router
 from src.jobs import router as jobs_router
-from src.update_check import router as system_router
+from src.system import router as system_router
 from src.ui import router as ui_router
 
 logger = get_logger("tibialy.main")
