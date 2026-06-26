@@ -9,13 +9,12 @@ def main():
     is_debug = "--debug" in sys.argv
     app_name = "Tibialy_Debug" if is_debug else "Tibialy"
 
-    # Choose the correct separator dynamically (';' on Windows, ':' on Mac/Linux)
     sep = os.pathsep
 
-    # Dynamically toggle compilation architecture based on Host OS
     if sys.platform == "darwin":
         print(f"Detected macOS: Switching to '--onedir' packaging for {app_name}.")
-        sys_args = ["--onedir"]
+        # macOS requires --windowed to generate a .app bundle
+        sys_args = ["--onedir", "--windowed"]
     else:
         print(
             f"Detected {sys.platform}: Retaining standalone '--onefile' compilation for {app_name}."
@@ -23,7 +22,9 @@ def main():
         sys_args = ["--onefile"]
 
     if not is_debug:
-        sys_args.extend(["--windowed", "--noconsole"])
+        # Hide console on Windows standard builds
+        if sys.platform != "darwin":
+            sys_args.extend(["--windowed", "--noconsole"])
 
     command = [
         "pyinstaller",
