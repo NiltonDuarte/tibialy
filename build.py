@@ -23,7 +23,11 @@ def main():
         print(
             f"Detected {sys.platform}: Retaining standalone '--onefile' compilation strategy."
         )
-        sys_args = ["--onefile"]
+        sys_args = [
+            "--onefile",
+            "--windowed",
+            "--noconsole",
+        ]
 
     command = [
         "pyinstaller",
