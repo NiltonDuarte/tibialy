@@ -1,0 +1,60 @@
+{
+    "id": "fire_library",
+    "name": "Secret Library (Fire Section)",
+    "overall_summary": {
+        "damage_dealt": [
+            "Fire",
+            "Death",
+            "Physical",
+            "Life Drain"
+        ],
+        "weaknesses": [
+            "Ice",
+            "Earth"
+        ]
+    },
+    "charm_setup": {
+        "Burning Book": {
+            "primary": "Poison",
+            "alt": "Dodge"
+        },
+        "Rage Squid": {
+            "primary": "Poison",
+            "alt": "Dodge"
+        },
+        "Guardian of Education": {
+            "primary": "Poison",
+            "alt": "Dodge"
+        }
+    },
+    "route_image": "",
+    "creatures": [
+        {
+            "name": "Burning Book",
+            "hp": 17000,
+            "weaknesses": [
+                "Ice (+15%)",
+                "Earth (+5%)"
+            ],
+            "damage_dealt": [
+                "Fire",
+                "Death",
+                "Physical"
+            ]
+        },
+        {
+            "name": "Rage Squid",
+            "hp": 15000,
+            "weaknesses": [
+                "Ice (+15%)",
+                "Holy (+5%)"
+            ],
+            "damage_dealt": [
+                "Fire",
+                "Physical",
+                "Death",
+                "Life Drain"
+            ]
+        }
+    ]
+}

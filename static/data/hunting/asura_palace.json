@@ -1,0 +1,35 @@
+{
+    "id": "asura_palace",
+    "name": "Asura Palace",
+    "overall_summary": {
+        "damage_dealt": [
+            "Fire",
+            "Death",
+            "Physical"
+        ],
+        "weaknesses": [
+            "Ice",
+            "Holy"
+        ]
+    },
+    "charm_setup": {
+        "Dawnfire Asura": "Freeze",
+        "Midnight Asura": "Divine Wrath"
+    },
+    "route_image": "",
+    "creatures": [
+        {
+            "name": "Dawnfire Asura",
+            "hp": 2900,
+            "weaknesses": [
+                "Ice (+10%)",
+                "Holy (+10%)"
+            ],
+            "damage_dealt": [
+                "Fire",
+                "Death",
+                "Physical"
+            ]
+        }
+    ]
+}

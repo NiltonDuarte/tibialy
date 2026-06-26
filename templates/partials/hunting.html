@@ -1,0 +1,65 @@
+<div id="page-hunting" class="hidden animate-fade-in">
+    <div class="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
+
+        <div class="lg:w-1/3 space-y-6">
+            <div class="bg-theme-bg-panel p-6 rounded-lg border border-theme-border-base shadow-lg">
+                <h2 class="text-xl font-bold text-theme-accent-text mb-4 flex items-center gap-2">
+                    🗺️ Hunting Database
+                </h2>
+
+                <select id="huntingSelector" onchange="renderHuntingGround()" class="w-full p-2.5 mb-4 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-white focus:outline-none focus:border-theme-accent-focus cursor-pointer font-semibold shadow-sm">
+                    </select>
+
+                <div class="grid grid-cols-2 gap-2 mb-6">
+                    <div class="flex gap-2">
+                        <button onclick="openEditor(false)" class="w-full p-2 bg-theme-bg-input hover:bg-theme-border-dark text-theme-text-white font-bold rounded text-sm transition border border-theme-border-light" title="Edit Selected">
+                            ✏️ Edit
+                        </button>
+                        <button onclick="openEditor(true)" class="w-full p-2 bg-theme-accent-bg hover:bg-theme-accent-hover text-theme-text-white font-bold rounded text-sm transition shadow" title="Create New">
+                            ➕ New
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="exportHuntingData()" class="w-full p-2 bg-theme-bg-input hover:bg-theme-border-dark text-theme-text-white font-bold rounded text-sm transition border border-theme-border-light" title="Export Selected Spawn">
+                            📤 Export
+                        </button>
+                        <button onclick="document.getElementById('importHuntingFile').click()" class="w-full p-2 bg-theme-bg-input hover:bg-theme-border-dark text-theme-text-white font-bold rounded text-sm transition border border-theme-border-light" title="Import Single Spawn">
+                            📥 Import
+                        </button>
+                        <input type="file" id="importHuntingFile" accept=".json" class="hidden" onchange="importHuntingData(event)">
+                    </div>
+                </div>
+
+                <hr class="border-theme-border-light mb-6">
+
+                <div id="huntingSummary" class="space-y-4">
+                    </div>
+            </div>
+
+            <div id="routeImageContainer" class="hidden bg-theme-bg-panel p-2 rounded-lg border border-theme-border-base shadow-lg">
+                <img id="routeImage" src="" alt="Hunting Route" class="w-full rounded border border-theme-border-light opacity-90 hover:opacity-100 transition">
+            </div>
+        </div>
+
+        <div class="lg:w-2/3">
+            <div id="creatureGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="huntingEditorModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-theme-bg-panel p-6 rounded-lg border border-theme-border-base shadow-2xl w-full max-w-3xl flex flex-col h-[80vh]">
+        <h2 class="text-lg font-bold text-theme-accent-text mb-2">⚙️ Single Document Editor</h2>
+        <p class="text-xs text-theme-text-dim mb-4">Edit this specific hunting ground. The <code class="text-theme-accent-text">"id"</code> field must be unique.</p>
+
+        <textarea id="huntingJsonEditor" class="w-full flex-grow p-4 bg-theme-bg-console text-theme-text-white font-mono text-sm rounded border border-theme-border-dark focus:outline-none focus:border-theme-accent-focus resize-none mb-4 whitespace-pre" spellcheck="false"></textarea>
+
+        <div class="flex gap-3 shrink-0">
+            <button onclick="deleteHuntingGround()" class="px-4 py-2 bg-red-900/80 hover:bg-red-700 text-white font-bold rounded text-sm transition mr-auto border border-red-800">🗑️ Delete</button>
+            <button onclick="closeEditor()" class="px-4 py-2 bg-theme-bg-input hover:bg-theme-border-dark text-theme-text-white font-bold rounded text-sm transition border border-theme-border-light">Cancel</button>
+            <button onclick="saveEditor()" class="px-4 py-2 bg-theme-accent-bg hover:bg-theme-accent-hover text-theme-text-white font-bold rounded text-sm transition shadow">Save Document</button>
+        </div>
+    </div>
+</div>

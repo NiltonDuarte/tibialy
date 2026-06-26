@@ -1,0 +1,97 @@
+{
+    "id": "castle_catacombs",
+    "name": "Azzilon Castle Catacombs",
+    "overall_summary": {
+        "damage_dealt": [
+            "Death",
+            "Fire",
+            "Physical",
+            "Energy"
+        ],
+        "weaknesses": [
+            "Ice",
+            "Holy"
+        ]
+    },
+    "charm_setup": {
+        "Spellreaper Inferniarch": {
+            "primary": "Poison",
+            "alt": "Divine Wrath"
+        },
+        "Hellhunter Inferniarch": {
+            "primary": "Curse",
+            "alt": "Divine Wrath"
+        },
+        "Brinebrute Inferniarch": {
+            "primary": "Enflame",
+            "alt": "Divine Wrath"
+        }
+    },
+    "route_image": "",
+    "creatures": [
+        {
+            "name": "Spellreaper Inferniarch",
+            "hp": 22000,
+            "weaknesses": [
+                "Ice (+10%)",
+                "Holy (+5%)"
+            ],
+            "damage_dealt": [
+                "Energy",
+                "Death",
+                "Physical",
+                "Mana Drain"
+            ],
+            "best_charms": [
+                "Freeze",
+                "Divine Wrath"
+            ],
+            "alt_charms": [
+                "Wound",
+                "Dodge"
+            ]
+        },
+        {
+            "name": "Hellhunter Inferniarch",
+            "hp": 21500,
+            "weaknesses": [
+                "Holy (+15%)",
+                "Ice (+5%)"
+            ],
+            "damage_dealt": [
+                "Fire",
+                "Physical",
+                "Death"
+            ],
+            "best_charms": [
+                "Divine Wrath",
+                "Freeze"
+            ],
+            "alt_charms": [
+                "Wound",
+                "Parry"
+            ]
+        },
+        {
+            "name": "Brinebrute Inferniarch",
+            "hp": 32000,
+            "weaknesses": [
+                "Energy (+10%)",
+                "Holy (+5%)"
+            ],
+            "damage_dealt": [
+                "Ice",
+                "Physical",
+                "Death"
+            ],
+            "best_charms": [
+                "Zap",
+                "Divine Wrath"
+            ],
+            "alt_charms": [
+                "Wound",
+                "Poison"
+            ]
+        }
+    ]
+}

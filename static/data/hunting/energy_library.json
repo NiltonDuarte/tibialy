@@ -1,0 +1,73 @@
+{
+    "id": "energy_library",
+    "name": "Secret Library (Energy Section)",
+    "overall_summary": {
+        "damage_dealt": [
+            "Energy",
+            "Death",
+            "Physical",
+            "Life Drain"
+        ],
+        "weaknesses": [
+            "Earth",
+            "Fire"
+        ]
+    },
+    "charm_setup": {
+        "Energetic Book": {
+            "primary": "Poison",
+            "alt": "Dodge"
+        },
+        "Biting Book": {
+            "primary": "Zap",
+            "alt": "Parry"
+        },
+        "Brain Squid": {
+            "primary": "Curse",
+            "alt": "Wound"
+        }
+    },
+    "route_image": "",
+    "creatures": [
+        {
+            "name": "Energetic Book",
+            "hp": 18500,
+            "weaknesses": [
+                "Earth (+10%)",
+                "Fire (+5%)"
+            ],
+            "damage_dealt": [
+                "Energy",
+                "Death",
+                "Physical"
+            ]
+        },
+        {
+            "name": "Biting Book",
+            "hp": 16000,
+            "weaknesses": [
+                "Fire (+10%)",
+                "Earth (+5%)"
+            ],
+            "damage_dealt": [
+                "Death",
+                "Physical",
+                "Life Drain"
+            ]
+        },
+        {
+            "name": "Brain Squid",
+            "hp": 14000,
+            "weaknesses": [
+                "Physical (+10%)",
+                "Fire (+5%)"
+            ],
+            "damage_dealt": [
+                "Energy",
+                "Death",
+                "Physical",
+                "Mana Drain"
+            ]
+        }
+    ]
+}
