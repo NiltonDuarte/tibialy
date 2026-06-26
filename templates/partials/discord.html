@@ -12,7 +12,7 @@
                 </div>
                 <div>
                     <label class="text-xs text-theme-text-dim">Start Time (Game)</label>
-                    <input type="time" id="bookStart" onchange="calculateEndHour()"
+                    <input type="time" lang="en-GB" id="bookStart" onchange="calculateEndHour()"
                         class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus text-theme-text-main">
                 </div>
                 <div class="col-span-2">
@@ -24,18 +24,23 @@
                 </div>
                 <div>
                     <label class="text-xs text-theme-text-dim">End Time (Game)</label>
-                    <input type="time" id="bookEnd"
+                    <input type="time" lang="en-GB" id="bookEnd"
                         class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus text-theme-text-main">
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3 pt-2 border-t border-theme-border-base mt-2">
+            <div class="grid grid-cols-5 gap-3 pt-2 border-t border-theme-border-base mt-2">
                 <div class="col-span-2">
                     <label class="text-xs text-theme-text-dim">Execute Script At (Your Local Time)</label>
-                    <input type="datetime-local" id="discordTime" step="0.001"
+                    <input type="datetime-local" lang="en-GB" id="discordTime" step="0.001"
                         class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light text-theme-text-main focus:outline-none focus:border-theme-accent-focus">
                 </div>
+                <div class="col-span-2">
+                    <label class="text-xs text-theme-text-dim">Booking Date</label>
+                    <input type="date" id="bookDate"
+                        class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus text-theme-text-main">
+                </div>
                 <div class="col-span-1">
-                    <label class="text-xs text-theme-text-dim">Message Count (Repeats)</label>
+                    <label class="text-xs text-theme-text-dim">Count (Repeats)</label>
                     <input type="number" id="bookCount" min="1" value="1"
                         class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus text-theme-text-main">
                 </div>

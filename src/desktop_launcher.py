@@ -28,7 +28,12 @@ def initialize_backend(window: webview.Window) -> None:
 
     # 2. Configure and run Uvicorn inside this background ecosystem
     config = uvicorn.Config(
-        app, host="127.0.0.1", port=8013, log_level="warning", use_colors=False
+        app,
+        host="127.0.0.1",
+        port=8013,
+        log_level="warning",
+        use_colors=False,
+        log_config=None,
     )
     _server_pointer = uvicorn.Server(config)
 

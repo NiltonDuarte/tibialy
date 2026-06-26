@@ -76,9 +76,10 @@ function scheduleDiscordBooking() {
     const end = document.getElementById('bookEnd').value;
     const time = document.getElementById('discordTime').value;
     const count = parseInt(document.getElementById('bookCount').value) || 1;
+    const date = document.getElementById('bookDate').value;
 
-    if (!char || !spot || !start || !end || !time) {
-        logAction("Error: All booking fields and execution time are required.");
+    if (!char || !spot || !start || !end || !time || !date) {
+        logAction("Error: All fields are required.");
         return;
     }
     if (new Date(time) <= new Date()) {
@@ -94,7 +95,8 @@ function scheduleDiscordBooking() {
             start_hour: start,
             end_hour: end,
             trigger_time: time,
-            message_count: count
+            message_count: count,
+            booking_date: date
         })
     }).then(() => {
         setTimeout(fetchYamlDb, 500);
@@ -139,4 +141,16 @@ document.addEventListener('DOMContentLoaded', () => {
     charInput.addEventListener('input', (e) => localStorage.setItem('tibialy_bookChar', e.target.value));
     spotInput.addEventListener('input', (e) => localStorage.setItem('tibialy_bookSpot', e.target.value));
     timeInput.addEventListener('input', (e) => localStorage.setItem('tibialy_discordTime', e.target.value));
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const dateInput = document.getElementById('bookDate');
+    if (dateInput) {
+        const today = new Date();
+        const localDate = new Date(today.getTime() - (today.getTimezoneOffset() * 60000))
+            .toISOString()
+            .split('T')[0];
+        dateInput.value = localDate;
+    }
 });
