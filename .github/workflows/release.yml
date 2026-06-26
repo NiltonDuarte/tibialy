@@ -63,3 +63,4 @@ jobs:
             ${{ matrix.artifact_name }}
             ${{ matrix.debug_artifact_name }}
           generate_release_notes: true
+          prerelease: ${{ contains(github.ref, 'rc') }}
