@@ -6,37 +6,31 @@ import sys
 def main():
     print("Starting build process...")
 
+    is_debug = "--debug" in sys.argv
+    app_name = "Tibialy_Debug" if is_debug else "Tibialy"
+
     # Choose the correct separator dynamically (';' on Windows, ':' on Mac/Linux)
     sep = os.pathsep
 
     # Dynamically toggle compilation architecture based on Host OS
     if sys.platform == "darwin":
-        print(
-            "Detected macOS: Switching to '--onedir' packaging to bypass Gatekeeper extraction latency."
-        )
-        sys_args = [
-            "--onedir",
-            "--windowed",
-            "--noconsole",
-        ]
+        print(f"Detected macOS: Switching to '--onedir' packaging for {app_name}.")
+        sys_args = ["--onedir"]
     else:
         print(
-            f"Detected {sys.platform}: Retaining standalone '--onefile' compilation strategy."
+            f"Detected {sys.platform}: Retaining standalone '--onefile' compilation for {app_name}."
         )
-        sys_args = [
-            "--onefile",
-            "--windowed",
-            "--noconsole",
-        ]
+        sys_args = ["--onefile"]
+
+    if not is_debug:
+        sys_args.extend(["--windowed", "--noconsole"])
 
     command = [
         "pyinstaller",
-        *sys_args,  # Dynamic flag injection
+        *sys_args,
         "--noconfirm",
         "--name",
-        "Tibialy",
-        # "--windowed",
-        # "--noconsole",
+        app_name,
         "--paths",
         ".",
         "--icon",
@@ -63,7 +57,7 @@ def main():
     if result.returncode == 0:
         print("Build successful! Check the 'dist' folder.")
         if sys.platform == "darwin":
-            print("👉 Execute on Mac using: open dist/Tibialy.app")
+            print(f"👉 Execute on Mac using: open dist/{app_name}.app")
     else:
         print("Build failed. See errors above.")
         sys.exit(1)

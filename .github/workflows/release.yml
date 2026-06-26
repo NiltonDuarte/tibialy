@@ -3,9 +3,8 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*' # Triggers whenever you push a tag like "v1.0.0" or "v0.1"
+      - 'v*'
 
-# Required permissions to create the release and upload assets
 permissions:
   contents: write
 
@@ -18,8 +17,10 @@ jobs:
         include:
           - os: macos-latest
             artifact_name: Tibialy-macOS.zip
+            debug_artifact_name: Tibialy-Debug-macOS.zip
           - os: windows-latest
             artifact_name: Tibialy-Windows.zip
+            debug_artifact_name: Tibialy-Debug-Windows.zip
 
     steps:
       - name: Checkout repository
@@ -36,24 +37,29 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Build Application
+      - name: Build Standard Application
         run: uv run python build.py
 
-      # macOS `.app` bundles are actually directories and will break if downloaded unzipped.
-      - name: Archive macOS App
+      - name: Build Debug Application
+        run: uv run python build.py --debug
+
+      - name: Archive macOS Apps
         if: matrix.os == 'macos-latest'
         run: |
           cd dist
           zip -ry ../${{ matrix.artifact_name }} Tibialy.app
+          zip -ry ../${{ matrix.debug_artifact_name }} Tibialy_Debug.app
 
-      # On Windows, PyInstaller (with --onefile) creates a single .exe file inside the dist folder.
-      - name: Archive Windows App
+      - name: Archive Windows Apps
         if: matrix.os == 'windows-latest'
         run: |
           Compress-Archive -Path dist\Tibialy.exe -DestinationPath ${{ matrix.artifact_name }}
+          Compress-Archive -Path dist\Tibialy_Debug.exe -DestinationPath ${{ matrix.debug_artifact_name }}
 
       - name: Upload Artifacts to Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ matrix.artifact_name }}
+          files: |
+            ${{ matrix.artifact_name }}
+            ${{ matrix.debug_artifact_name }}
           generate_release_notes: true
