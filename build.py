@@ -14,16 +14,20 @@ def main():
         print(
             "Detected macOS: Switching to '--onedir' packaging to bypass Gatekeeper extraction latency."
         )
-        packaging_mode = "--onedir"
+        sys_args = [
+            "--onedir",
+            "--windowed",
+            "--noconsole",
+        ]
     else:
         print(
             f"Detected {sys.platform}: Retaining standalone '--onefile' compilation strategy."
         )
-        packaging_mode = "--onefile"
+        sys_args = ["--onefile"]
 
     command = [
         "pyinstaller",
-        packaging_mode,  # Dynamic flag injection
+        *sys_args,  # Dynamic flag injection
         "--noconfirm",
         "--name",
         "Tibialy",
