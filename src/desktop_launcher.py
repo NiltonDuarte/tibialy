@@ -120,4 +120,4 @@ def start_desktop_app() -> None:
             _server_pointer.should_exit = True
 
     window.events.closed += on_closed
-    webview.start(initialize_backend, [window])
+    webview.start(initialize_backend, [window], debug=True)
