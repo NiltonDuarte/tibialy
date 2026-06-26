@@ -44,7 +44,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           cd dist
-          zip -r ../${{ matrix.artifact_name }} Tibialy.app
+          zip -ry ../${{ matrix.artifact_name }} Tibialy.app
 
       # On Windows, PyInstaller (with --onefile) creates a single .exe file inside the dist folder.
       - name: Archive Windows App
