@@ -154,3 +154,49 @@ document.addEventListener('DOMContentLoaded', () => {
         dateInput.value = localDate;
     }
 });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const timeInputs = [document.getElementById("bookStart"), document.getElementById("bookEnd")];
+
+    timeInputs.forEach(input => {
+        if (!input) return;
+
+        input.addEventListener("input", (e) => {
+            let value = e.target.value.replace(/[^0-9:]/g, ""); // Remove invalid characters
+
+            // If the user is deleting, don't force formatting behavior
+            if (e.inputType === "deleteContentBackward") {
+                return;
+            }
+
+            // Automatically inject colon after 2 digits
+            if (value.length === 2 && !value.includes(":")) {
+                value = value + ":";
+            }
+            // Automatically inject starting zero
+            if (value.length === 2 && value.includes(":")) {
+                value = "0" + value;
+            }
+
+            // Prevent users from pasting or typing extra digits past HH:MM
+            if (value.length > 5) {
+                value = value.slice(0, 5);
+            }
+
+            e.target.value = value;
+        });
+
+        // Optional validation: Ensure it's a valid 24h time when they click away (blur)
+        input.addEventListener("blur", (e) => {
+            const value = e.target.value;
+            const regex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+
+            if (value && !regex.test(value)) {
+                e.target.classList.add("border-red-500"); // Visual warning
+            } else {
+                e.target.classList.remove("border-red-500");
+            }
+        });
+    });
+});

@@ -26,7 +26,7 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -42,4 +42,10 @@ coll = COLLECT(
     upx=True,
     upx_exclude=[],
     name='Tibialy_Debug',
+)
+app = BUNDLE(
+    coll,
+    name='Tibialy_Debug.app',
+    icon='static/images/app_icon.png',
+    bundle_identifier=None,
 )
