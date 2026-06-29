@@ -16,11 +16,11 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            artifact_name: Tibialy-macOS.zip
-            debug_artifact_name: Tibialy-Debug-macOS.zip
+            artifact_name: Tibialy-${{ github.ref_name }}-macOS.zip
+            debug_artifact_name: Tibialy-Debug-${{ github.ref_name }}-macOS.zip
           - os: windows-latest
-            artifact_name: Tibialy-Windows.zip
-            debug_artifact_name: Tibialy-Debug-Windows.zip
+            artifact_name: Tibialy-${{ github.ref_name }}-Windows.zip
+            debug_artifact_name: Tibialy-Debug-${{ github.ref_name }}-Windows.zip
 
     steps:
       - name: Checkout repository
