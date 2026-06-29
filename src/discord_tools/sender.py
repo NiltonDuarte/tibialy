@@ -4,9 +4,13 @@ import time
 from datetime import datetime
 import pyperclip
 import pyautogui
+from src.core.logger import get_logger
+
+logger = get_logger("tibialy.discord_tools.sender")
 
 
 def _send_sync(message: str, target_timestamp: float):
+    logger.info("botting sync send", message=message, target_timestamp=target_timestamp)
     # 1. Copy payload immediately to ensure OS clipboard is synced
     pyperclip.copy(message)
     modifier = "command" if sys.platform == "darwin" else "ctrl"
@@ -18,15 +22,23 @@ def _send_sync(message: str, target_timestamp: float):
     pyautogui.press("v")
     time.sleep(0.25)
     pyautogui.keyUp(modifier)
-
+    logger.info("message pasted, waiting millisecond precision")
     # 2. Wait using sleep until 50ms before target to save CPU
-    pre_target = target_timestamp - 0.050
+    pre_target = target_timestamp - 0.150
     while time.time() < pre_target:
         time.sleep(0.05)
 
-    while time.time() < target_timestamp:
+    # precision sleep
+    while precision_ts := time.time() < target_timestamp:
         time.sleep(0.01)
     # pyautogui.press("enter")
+    after_ts = time.time()
+    logger.info(
+        "message send",
+        target_timestamp=target_timestamp,
+        precision_ts=precision_ts,
+        after_ts=after_ts,
+    )
 
 
 async def send_discord_message(message: str, trigger_time: datetime, count: int = 1):

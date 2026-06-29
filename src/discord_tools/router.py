@@ -64,7 +64,7 @@ def schedule_booking(req: ScheduleRequest):
     # Construct the final template string
     message = f"/book character:{req.character} spot:{req.spot} date:{req.booking_date.strftime("%d.%m.%Y")} start:{req.start_hour} end:{req.end_hour}"
 
-    early_run_date = req.trigger_time - timedelta(seconds=2)
+    early_run_date = req.trigger_time - timedelta(seconds=5)
 
     scheduler.add_job(
         send_discord_message,

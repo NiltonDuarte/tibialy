@@ -85,6 +85,3 @@ def setup_logging() -> None:
 
 def get_logger(name: str) -> Loggerly:
     return Loggerly(name)
-
-
-setup_logging()

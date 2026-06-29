@@ -1,6 +1,7 @@
 import sys
 import os
 import multiprocessing
+from src.core.logger import setup_logging, get_logger
 
 # 1. Provide multiprocessing support for PyInstaller executables
 if sys.platform.startswith("win"):
@@ -17,4 +18,13 @@ if sys.stdin is None:
 from src.desktop_launcher import start_desktop_app
 
 if __name__ == "__main__":
+    setup_logging()
+    logger = get_logger("tibialy.main")
+    logger.info("""
+
+
+********
+Starting Tibialy
+********
+""")
     start_desktop_app()
