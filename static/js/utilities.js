@@ -1,4 +1,8 @@
 let staminaTickerInterval = null;
+let currentSessionData = null;
+let historicalRecords = [];
+let sortConfig = { column: 'date', order: 'desc' };
+let currentlyOpenRecordDate = null;
 
 // Helper to calculate total real-world minutes required to reach thresholds from initial logout
 function getRegenMinutes(startHours, startMins, applyPenalty) {
@@ -196,8 +200,12 @@ function clearStaminaTracker() {
     }
 }
 
+
+// Initial Boot
+document.addEventListener("DOMContentLoaded", initStaminaTracker);
+
 // ==========================================
-// PARTY LOOT SPLITTER
+// PARTY LOOT SPLITTER & RECORDS
 // ==========================================
 
 function analyzeLoot() {
@@ -210,24 +218,21 @@ function analyzeLoot() {
     let totalBalance = 0;
     let totalDamage = 0;
     let totalHealing = 0;
+    let totalLoot = 0;
     let players = [];
     let currentPlayer = null;
 
-    // Parse the Tibia log format dynamically
     for (let line of lines) {
         if (line.startsWith("Session data:") || line.startsWith("Loot Type:")) continue;
-
         if (line.startsWith("Session:")) {
             sessionDuration = line.replace("Session:", "").trim();
             continue;
         }
 
         const cleanLine = line.replace(/,/g, '');
-
         if (cleanLine.startsWith("Balance:") && currentPlayer === null) {
             totalBalance = parseInt(cleanLine.split(':')[1].trim());
         } else if (!cleanLine.includes(":")) {
-            // No colon indicates a player name header
             if (currentPlayer) players.push(currentPlayer);
             currentPlayer = { name: line, loot: 0, supplies: 0, balance: 0, damage: 0, healing: 0 };
         } else if (currentPlayer) {
@@ -235,7 +240,7 @@ function analyzeLoot() {
             const key = parts[0].trim();
             const val = parseInt(parts[1].trim()) || 0;
 
-            if (key === "Loot") currentPlayer.loot = val;
+            if (key === "Loot") { currentPlayer.loot = val; totalLoot += val; }
             if (key === "Supplies") currentPlayer.supplies = val;
             if (key === "Balance") currentPlayer.balance = val;
             if (key === "Damage") { currentPlayer.damage = val; totalDamage += val; }
@@ -243,94 +248,120 @@ function analyzeLoot() {
         }
     }
     if (currentPlayer) players.push(currentPlayer);
+    if (players.length === 0) return alert("Could not detect any players.");
 
-    if (players.length === 0) {
-        alert("Could not detect any players. Please ensure you copy the entire Party Hunt analyzer text.");
+    // Parse Duration
+    let durationHours = 1;
+    const match = sessionDuration.match(/(\d+):(\d+)h/);
+    if (match) durationHours = parseInt(match[1]) + (parseInt(match[2]) / 60);
+    if (durationHours <= 0) durationHours = 1;
+
+    const perPlayerShare = Math.floor(totalBalance / players.length);
+    const profitPerHour = Math.round(totalBalance / durationHours);
+
+    currentSessionData = {
+        date: new Date().toISOString(),
+        duration: sessionDuration,
+        duration_hours: durationHours,
+        total_balance: totalBalance,
+        total_damage: totalDamage,
+        total_healing: totalHealing,
+        total_loot: totalLoot,
+        profit_per_hour: profitPerHour,
+        damage_per_hour: Math.round(totalDamage / durationHours),
+        healing_per_hour: Math.round(totalHealing / durationHours),
+        loot_per_hour: Math.round(totalLoot / durationHours),
+        players: players
+    };
+
+    document.getElementById('outDuration').innerText = sessionDuration;
+    document.getElementById('outTotalBalance').innerText = totalBalance.toLocaleString() + ' gp';
+
+    const pphEl = document.getElementById('outProfitPerHour');
+    const ppEl = document.getElementById('outPerPlayer');
+    pphEl.innerText = profitPerHour.toLocaleString() + ' gp/h';
+    ppEl.innerText = perPlayerShare.toLocaleString() + ' gp';
+
+    if (totalBalance > 0) {
+        pphEl.className = "text-lg font-bold text-green-400 mt-1 font-mono";
+        ppEl.className = "text-lg font-semibold text-green-400 mt-1 font-mono";
+    } else {
+        pphEl.className = "text-lg font-bold text-red-500 mt-1 font-mono";
+        ppEl.className = "text-lg font-semibold text-red-500 mt-1 font-mono";
+    }
+
+    renderTransfers(players, perPlayerShare);
+    renderPlayerCards(players, durationHours, 'playerStatsGrid');
+
+    const btn = document.getElementById('saveRecordBtn');
+    if (btn) {
+        btn.innerHTML = "💾 Save Record";
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
+    document.getElementById('lootOutputBox').classList.remove('hidden');
+}
+
+function renderTransfers(players, perPlayerShare) {
+    let payers = [], receivers = [];
+    players.forEach(p => {
+        const diff = p.balance - perPlayerShare;
+        if (diff > 0) payers.push({ name: p.name, amount: diff });
+        else if (diff < 0) receivers.push({ name: p.name, amount: Math.abs(diff) });
+    });
+
+    const box = document.getElementById('transferInstructions');
+    box.innerHTML = '';
+
+    if (payers.length === 0 && receivers.length === 0) {
+        box.innerHTML = '<div class="text-theme-text-muted italic bg-theme-bg-input/30 p-3 rounded border border-theme-border-light/50">Balance is perfectly even. No transfers needed!</div>';
         return;
     }
 
-    const perPlayerShare = Math.floor(totalBalance / players.length);
+    let html = [];
+    while (payers.length > 0 && receivers.length > 0) {
+        let payer = payers[0], receiver = receivers[0];
+        let amount = Math.min(payer.amount, receiver.amount);
 
-    // Output Core Metrics
-    document.getElementById('outDuration').innerText = sessionDuration;
-    document.getElementById('outTotalBalance').innerText = totalBalance.toLocaleString() + ' gp';
-    document.getElementById('outPerPlayer').innerText = perPlayerShare.toLocaleString() + ' gp';
-
-    const statusEl = document.getElementById('outStatus');
-    if (totalBalance > 0) {
-        statusEl.innerText = "Profit";
-        statusEl.className = "text-lg font-bold text-green-400 mt-1 uppercase";
-        document.getElementById('outPerPlayer').className = "text-lg font-semibold text-green-400 mt-1 font-mono";
-    } else {
-        statusEl.innerText = "Waste";
-        statusEl.className = "text-lg font-bold text-red-500 mt-1 uppercase";
-        document.getElementById('outPerPlayer').className = "text-lg font-semibold text-red-500 mt-1 font-mono";
-    }
-
-    // Calculate Debts and Receivables
-    let payers = [];
-    let receivers = [];
-
-    players.forEach(p => {
-        const diff = p.balance - perPlayerShare;
-        if (diff > 0) {
-            payers.push({ name: p.name, amount: diff });
-        } else if (diff < 0) {
-            receivers.push({ name: p.name, amount: Math.abs(diff) });
-        }
-    });
-
-    // Generate Transfer Instructions
-    const instructionBox = document.getElementById('transferInstructions');
-    instructionBox.innerHTML = '';
-
-    if (payers.length === 0 && receivers.length === 0) {
-        instructionBox.innerHTML = '<div class="text-theme-text-muted italic bg-theme-bg-input/30 p-3 rounded border border-theme-border-light/50">Balance is perfectly even. No transfers needed!</div>';
-    } else {
-        let transfers = [];
-
-        while (payers.length > 0 && receivers.length > 0) {
-            let payer = payers[0];
-            let receiver = receivers[0];
-            let amountToTransfer = Math.min(payer.amount, receiver.amount);
-
-            transfers.push(`
-                <div class="flex items-center justify-between bg-theme-bg-input/50 p-3 rounded border border-theme-border-light/40">
-                    <div class="flex items-center gap-2 font-mono">
-                        <span class="font-semibold text-theme-text-white">${payer.name}</span>
-                        <span class="text-theme-text-dim text-[11px] uppercase">pays</span>
-                        <span class="text-theme-accent-text font-bold">${amountToTransfer.toLocaleString()} gp</span>
-                        <span class="text-theme-text-dim text-[11px] uppercase">to</span>
-                        <span class="font-semibold text-theme-text-white">${receiver.name}</span>
-                    </div>
-                    <button onclick="copyTransferCommand('transfer ${amountToTransfer} to ${receiver.name}', this)" class="px-3 py-1 bg-theme-bg-panel hover:bg-theme-border-base text-theme-text-white text-[11px] font-bold uppercase tracking-wider rounded border border-theme-border-light transition shadow-sm shrink-0">
-                        📋 Copy
-                    </button>
+        html.push(`
+            <div class="flex items-center justify-between bg-theme-bg-input/50 p-3 rounded border border-theme-border-light/40">
+                <div class="flex items-center gap-2 font-mono">
+                    <span class="font-semibold text-theme-text-white">${payer.name}</span>
+                    <span class="text-theme-text-dim text-[11px] uppercase">pays</span>
+                    <span class="text-theme-accent-text font-bold">${amount.toLocaleString()} gp</span>
+                    <span class="text-theme-text-dim text-[11px] uppercase">to</span>
+                    <span class="font-semibold text-theme-text-white">${receiver.name}</span>
                 </div>
-            `);
-
-            payer.amount -= amountToTransfer;
-            receiver.amount -= amountToTransfer;
-
-            if (payer.amount === 0) payers.shift();
-            if (receiver.amount === 0) receivers.shift();
-        }
-        instructionBox.innerHTML = transfers.join('');
+                <button onclick="copyTransferCommand('transfer ${amount} to ${receiver.name}', this)" class="px-3 py-1 bg-theme-bg-panel hover:bg-theme-border-base text-theme-text-white text-[11px] font-bold uppercase tracking-wider rounded border border-theme-border-light transition shadow-sm shrink-0">📋 Copy</button>
+            </div>
+        `);
+        payer.amount -= amount;
+        receiver.amount -= amount;
+        if (payer.amount === 0) payers.shift();
+        if (receiver.amount === 0) receivers.shift();
     }
+    box.innerHTML = html.join('');
+}
 
-    // Generate Player Detail Cards
-    const statsGrid = document.getElementById('playerStatsGrid');
-    statsGrid.innerHTML = '';
+function renderPlayerCards(players, durationHours, targetElementId) {
+    const grid = document.getElementById(targetElementId);
+    grid.innerHTML = '';
+
+    const totalBalance = players.reduce((sum, p) => sum + p.balance, 0);
+    const totalDamage = players.reduce((sum, p) => sum + p.damage, 0);
+    const totalHealing = players.reduce((sum, p) => sum + p.healing, 0);
 
     players.forEach(p => {
-        // Safe mathematical percentages
         const balShare = totalBalance !== 0 ? ((p.balance / totalBalance) * 100).toFixed(1) : 0;
         const dmgShare = totalDamage > 0 ? ((p.damage / totalDamage) * 100).toFixed(1) : 0;
         const healShare = totalHealing > 0 ? ((p.healing / totalHealing) * 100).toFixed(1) : 0;
-
         const balColor = p.balance >= 0 ? 'text-green-400' : 'text-red-400';
 
-        statsGrid.innerHTML += `
+        const dmgPerHour = durationHours > 0 ? Math.round(p.damage / durationHours) : 0;
+        const healPerHour = durationHours > 0 ? Math.round(p.healing / durationHours) : 0;
+
+        grid.innerHTML += `
             <div class="bg-theme-bg-input/20 p-4 rounded-lg border border-theme-border-light shadow-sm flex flex-col gap-3">
                 <div class="font-bold text-theme-text-white border-b border-theme-border-light/50 pb-1">${p.name}</div>
                 <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm font-mono">
@@ -353,31 +384,27 @@ function analyzeLoot() {
                         <span class="text-theme-text-dim text-[10px] uppercase">Damage</span>
                         <div class="flex items-center gap-2">
                             <span class="text-red-300">${p.damage.toLocaleString()}</span>
-                            <span class="text-[10px] text-theme-text-muted">(${dmgShare}%)</span>
+                            <span class="text-[10px] text-theme-text-dim">${dmgPerHour.toLocaleString()}/h (${dmgShare}%)</span>
                         </div>
                     </div>
                     <div class="flex justify-between items-center col-span-2">
                         <span class="text-theme-text-dim text-[10px] uppercase">Healing</span>
                         <div class="flex items-center gap-2">
                             <span class="text-blue-300">${p.healing.toLocaleString()}</span>
-                            <span class="text-[10px] text-theme-text-muted">(${healShare}%)</span>
+                            <span class="text-[10px] text-theme-text-dim">${healPerHour.toLocaleString()}/h (${healShare}%)</span>
                         </div>
                     </div>
                 </div>
             </div>
         `;
     });
-
-    document.getElementById('lootOutputBox').classList.remove('hidden');
 }
 
-// Global helper for the copy to clipboard action
 function copyTransferCommand(text, btnElement) {
     navigator.clipboard.writeText(text).then(() => {
         const originalHtml = btnElement.innerHTML;
         btnElement.innerHTML = "✅ Copied";
         btnElement.classList.add("border-green-500", "text-green-400");
-
         setTimeout(() => {
             btnElement.innerHTML = originalHtml;
             btnElement.classList.remove("border-green-500", "text-green-400");
@@ -385,5 +412,135 @@ function copyTransferCommand(text, btnElement) {
     });
 }
 
-// Initial Boot
-document.addEventListener("DOMContentLoaded", initStaminaTracker);
+async function saveSessionRecord() {
+    if (!currentSessionData) return;
+    currentSessionData.annotations = document.getElementById('sessionAnnotations').value.trim();
+    currentSessionData.tags = document.getElementById('sessionTags').value.split(',').map(t => t.trim()).filter(t => t);
+
+    try {
+        await triggerEndpoint('/api/utilities/records', { method: 'POST', body: JSON.stringify(currentSessionData) });
+        if (typeof logAction === "function") logAction("Hunting session record saved.");
+
+        const btn = document.getElementById('saveRecordBtn');
+        if (btn) {
+            btn.innerHTML = "✅ Saved";
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        fetchRecords();
+    } catch (e) { console.error(e); }
+}
+
+async function fetchRecords() {
+    try {
+        const res = await fetch('/api/utilities/records');
+        if (res.ok) {
+            const data = await res.json();
+            historicalRecords = data.sessions || [];
+            renderRecordsTable();
+        }
+    } catch (e) { console.error(e); }
+}
+
+function sortRecords(column) {
+    if (sortConfig.column === column) {
+        sortConfig.order = sortConfig.order === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortConfig.column = column;
+        sortConfig.order = 'desc';
+    }
+    renderRecordsTable();
+}
+
+function renderRecordsTable() {
+    const tbody = document.getElementById('recordsTableBody');
+    const filterPlayer = document.getElementById('filterPlayer').value.toLowerCase();
+    const filterTag = document.getElementById('filterTag').value.toLowerCase();
+
+    let filtered = historicalRecords.filter(r => {
+        const matchPlayer = r.players.some(p => p.name.toLowerCase().includes(filterPlayer));
+        const matchTag = r.tags && r.tags.some(t => t.toLowerCase().includes(filterTag));
+        return (!filterPlayer || matchPlayer) && (!filterTag || matchTag);
+    });
+
+    filtered.sort((a, b) => {
+        let valA, valB;
+        if (sortConfig.column === 'date') { valA = new Date(a.date); valB = new Date(b.date); }
+        else if (sortConfig.column === 'damage') { valA = a.damage_per_hour; valB = b.damage_per_hour; }
+        else if (sortConfig.column === 'healing') { valA = a.healing_per_hour; valB = b.healing_per_hour; }
+        else if (sortConfig.column === 'loot') { valA = a.loot_per_hour; valB = b.loot_per_hour; }
+        else if (sortConfig.column === 'profit') { valA = a.profit_per_hour; valB = b.profit_per_hour; }
+
+        if (valA < valB) return sortConfig.order === 'asc' ? -1 : 1;
+        if (valA > valB) return sortConfig.order === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-theme-text-dim text-xs">No matching records found.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map((r, i) => `
+        <tr class="border-b border-theme-border-light/30 hover:bg-theme-bg-input/50 cursor-pointer transition" onclick='showRecordDetails(${JSON.stringify(r).replace(/'/g, "&#39;")})'>
+            <td class="p-2 whitespace-nowrap">${new Date(r.date).toLocaleDateString()}</td>
+            <td class="p-2 truncate max-w-[120px]" title="${r.players.map(p => p.name).join(', ')}">${r.players.map(p => p.name).join(', ')}</td>
+            <td class="p-2 truncate max-w-[100px] text-theme-accent-text font-mono text-[10px]">${(r.tags || []).join(', ')}</td>
+            <td class="p-2 font-mono text-red-300">${(r.damage_per_hour || 0).toLocaleString()}</td>
+            <td class="p-2 font-mono text-blue-300">${(r.healing_per_hour || 0).toLocaleString()}</td>
+            <td class="p-2 font-mono text-theme-text-muted">${(r.loot_per_hour || 0).toLocaleString()}</td>
+            <td class="p-2 font-mono ${r.profit_per_hour >= 0 ? 'text-green-400' : 'text-red-400'}">${(r.profit_per_hour || 0).toLocaleString()}</td>
+        </tr>
+    `).join('');
+}
+
+function showRecordDetails(record) {
+    const detailsBox = document.getElementById('recordDetailsBox');
+
+    // Toggle closure if clicking the same row
+    if (currentlyOpenRecordDate === record.date && !detailsBox.classList.contains('hidden')) {
+        detailsBox.classList.add('hidden');
+        currentlyOpenRecordDate = null;
+        return;
+    }
+
+    currentlyOpenRecordDate = record.date;
+    detailsBox.classList.remove('hidden');
+
+    const annBox = document.getElementById('recordAnnotationsDisplay');
+    if (record.annotations) {
+        annBox.innerText = `📝 Notes: ${record.annotations}`;
+        annBox.classList.remove('hidden');
+    } else {
+        annBox.classList.add('hidden');
+    }
+
+    renderPlayerCards(record.players, record.duration_hours, 'recordPlayerCards');
+
+    const deleteBtn = document.getElementById('deleteRecordBtn');
+    if (deleteBtn) {
+        deleteBtn.onclick = () => deleteSingleRecord(record.date);
+    }
+
+    detailsBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function deleteSingleRecord(date) {
+    if (!confirm("Are you sure you want to delete this hunting record?")) return;
+
+    try {
+        await triggerEndpoint(`/api/utilities/records/${encodeURIComponent(date)}`, { method: 'DELETE' });
+        if (typeof logAction === "function") logAction("Hunting session record deleted.");
+
+        document.getElementById('recordDetailsBox').classList.add('hidden');
+        currentlyOpenRecordDate = null;
+        fetchRecords();
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    initStaminaTracker();
+    fetchRecords();
+});

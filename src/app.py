@@ -14,6 +14,7 @@ from src.discord_tools.router import router as discord_router
 from src.jobs import router as jobs_router
 from src.system import router as system_router
 from src.ui import router as ui_router
+from src.utilities.router import router as utilities_router
 
 logger = get_logger("tibialy.main")
 
@@ -38,3 +39,4 @@ app.include_router(system_router)
 app.include_router(websocket_router)
 app.include_router(alarms_router)
 app.include_router(discord_router)
+app.include_router(utilities_router)
