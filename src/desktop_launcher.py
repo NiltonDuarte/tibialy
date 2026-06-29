@@ -24,8 +24,12 @@ def initialize_backend(window: webview.Window) -> None:
     )
 
     # 1. Move heavy module loading INSIDE the thread so they happen while splash is spinning
-    from src.app import app
-    import uvicorn
+    try:
+        from src.app import app
+        import uvicorn
+    except Exception as e:
+        logger.error("backend_import_crash", error=str(e), exc_info=True)
+        return  # Kill thread safely
 
     # 2. Configure and run Uvicorn inside this background ecosystem
     config = uvicorn.Config(
