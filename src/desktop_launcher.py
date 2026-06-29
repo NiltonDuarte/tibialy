@@ -3,6 +3,7 @@ import time
 import urllib.request
 import urllib.error
 import webview
+from src._version import __version__
 
 
 from src.core.logger import get_logger
@@ -66,7 +67,8 @@ def start_desktop_app() -> None:
     global _server_pointer
 
     # 2. Define a clean inline splash layout matching your Default Dark theme
-    splash_html = """
+    splash_html = (
+        """
     <!DOCTYPE html>
     <html>
     <head>
@@ -104,10 +106,12 @@ def start_desktop_app() -> None:
     <body>
         <div class="spinner"></div>
         <h1>Tibialy</h1>
-        <p>Initializing desktop instance...</p>
+        <p>Initializing desktop instance...</p>"""
+        f"""<p>{__version__}</p>
     </body>
     </html>
     """
+    )
 
     # 3. Create the window serving the splash content instantly
     window = webview.create_window(

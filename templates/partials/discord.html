@@ -12,7 +12,8 @@
                 </div>
                 <div>
                     <label class="text-xs text-theme-text-dim">Start Time (Game)</label>
-                    <input type="time" lang="en-GB" id="bookStart" onchange="calculateEndHour()"
+                    <input type="text" id="bookStart" onchange="calculateEndHour()" placeholder="HH:MM"
+                        pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" maxlength="5" required
                         class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus text-theme-text-main">
                 </div>
                 <div class="col-span-2">
@@ -24,7 +25,8 @@
                 </div>
                 <div>
                     <label class="text-xs text-theme-text-dim">End Time (Game)</label>
-                    <input type="time" lang="en-GB" id="bookEnd"
+                    <input type="text" id="bookEnd" placeholder="HH:MM" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]"
+                        maxlength="5" required
                         class="w-full p-2 bg-theme-bg-input rounded border border-theme-border-light focus:outline-none focus:border-theme-accent-focus text-theme-text-main">
                 </div>
             </div>
