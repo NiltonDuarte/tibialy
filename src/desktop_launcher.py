@@ -1,3 +1,5 @@
+import os
+import sys
 import threading
 import time
 import urllib.error
@@ -11,6 +13,17 @@ from src.core.logger import get_logger
 logger = get_logger("tibialy.desktop")
 
 _server_pointer = None
+
+
+def is_debug_mode() -> bool:
+    """Check if running from source or if the compiled executable has 'debug' in its name."""
+    if getattr(sys, "frozen", False):
+        # Running as PyInstaller executable (e.g., Tibialy_Debug.exe or Tibialy_Debug.app)
+        exe_name = os.path.basename(sys.executable).lower()
+        return "debug" in exe_name
+
+    # Running natively from source (VSCode/Terminal)
+    return True
 
 
 def initialize_backend(window: webview.Window) -> None:
@@ -134,4 +147,6 @@ def start_desktop_app() -> None:
             _server_pointer.should_exit = True
 
     window.events.closed += on_closed
-    webview.start(initialize_backend, [window])
+    webview.start(
+        initialize_backend, [window], debug=is_debug_mode(), private_mode=False
+    )

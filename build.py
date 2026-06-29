@@ -58,7 +58,7 @@ def main():
     if result.returncode == 0:
         print("Build successful! Check the 'dist' folder.")
         if sys.platform == "darwin":
-            print(f"👉 Execute on Mac using: open dist/{app_name}.app")
+            print(f"Execute on Mac using: open dist/{app_name}.app")
     else:
         print("Build failed. See errors above.")
         sys.exit(1)
