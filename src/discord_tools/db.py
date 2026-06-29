@@ -5,21 +5,12 @@ from pathlib import Path
 
 import yaml
 
+from src.core.helpers import get_app_data_dir
+
 
 def get_db_path() -> Path:
-    print(f"DEBUG: sys.platform = {sys.platform}")
-    print(f"DEBUG: is frozen? = {getattr(sys, 'frozen', False)}")
-
-    if sys.platform == "win32":
-        app_data_dir = Path(os.environ.get("APPDATA", "~")).expanduser() / "Tibialy"
-    elif sys.platform == "darwin":
-        app_data_dir = Path.home() / "Library" / "Application Support" / "Tibialy"
-    else:
-        app_data_dir = Path.home() / ".tibialy"
-
-    app_data_dir.mkdir(parents=True, exist_ok=True)
+    app_data_dir = get_app_data_dir()
     persistent_db_path = app_data_dir / "database.yaml"
-    print(f"DEBUG: Target persistent_db_path = {persistent_db_path}")
 
     if not persistent_db_path.exists():
         if getattr(sys, "frozen", False):
