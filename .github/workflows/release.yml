@@ -56,11 +56,29 @@ jobs:
           Compress-Archive -Path dist\Tibialy.exe -DestinationPath ${{ matrix.artifact_name }}
           Compress-Archive -Path dist\Tibialy_Debug.exe -DestinationPath ${{ matrix.debug_artifact_name }}
 
-      - name: Upload Artifacts to Release
-        uses: softprops/action-gh-release@v2
+      - name: Upload to Workflow
+        uses: actions/upload-artifact@v4
         with:
-          files: |
+          name: built-apps-${{ matrix.os }}
+          path: |
             ${{ matrix.artifact_name }}
             ${{ matrix.debug_artifact_name }}
+
+  release:
+    name: Publish Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-artifacts
+          pattern: built-apps-*
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist-artifacts/*
           generate_release_notes: true
           prerelease: ${{ contains(github.ref, 'rc') }}
