@@ -1,8 +1,9 @@
 import os
-import sys
 import shutil
-import yaml
+import sys
 from pathlib import Path
+
+import yaml
 
 
 def get_db_path() -> Path:

@@ -1,10 +1,12 @@
-from dataclasses import dataclass
-import urllib.request
 import json
+import urllib.request
+from dataclasses import dataclass
 from typing import Dict, Union
+
 from fastapi import APIRouter
+
+from src.config import APP_STATE, GITHUB_REPO, __version__
 from src.core.logger import get_logger
-from src.config import __version__, GITHUB_REPO, APP_STATE
 
 logger = get_logger("tibialy.update_check")
 router = APIRouter(prefix="/api/system", tags=["System"])

@@ -1,7 +1,8 @@
-import sys
-import os
 import multiprocessing
-from src.core.logger import setup_logging, get_logger
+import os
+import sys
+
+from src.core.logger import get_logger, setup_logging
 
 # 1. Provide multiprocessing support for PyInstaller executables
 if sys.platform.startswith("win"):

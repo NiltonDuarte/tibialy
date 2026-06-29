@@ -1,8 +1,9 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
-from typing import Callable, List, Any, Dict
 import asyncio
 import json
 import traceback
+from typing import Any, Callable, Dict, List
+
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 
 router = APIRouter(prefix="/websocket", tags=["Websocket"])
 

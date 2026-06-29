@@ -1,11 +1,11 @@
 import threading
 import time
-import urllib.request
 import urllib.error
+import urllib.request
+
 import webview
+
 from src._version import __version__
-
-
 from src.core.logger import get_logger
 
 logger = get_logger("tibialy.desktop")
@@ -25,8 +25,9 @@ def initialize_backend(window: webview.Window) -> None:
 
     # 1. Move heavy module loading INSIDE the thread so they happen while splash is spinning
     try:
-        from src.app import app
         import uvicorn
+
+        from src.app import app
     except Exception as e:
         logger.error("backend_import_crash", error=str(e), exc_info=True)
         return  # Kill thread safely

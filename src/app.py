@@ -1,13 +1,15 @@
 import asyncio
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 
-from src.core.scheduler import scheduler
-from src.core.logger import get_logger
-from src.core.websocket import router as websocket_router, get_websocket_manager
-from src.config import STATIC_PATH
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+
 from src.alarms.router import router as alarms_router
+from src.config import STATIC_PATH
+from src.core.logger import get_logger
+from src.core.scheduler import scheduler
+from src.core.websocket import get_websocket_manager
+from src.core.websocket import router as websocket_router
 from src.discord_tools.router import router as discord_router
 from src.jobs import router as jobs_router
 from src.system import router as system_router
