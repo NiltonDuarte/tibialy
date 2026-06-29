@@ -2,8 +2,10 @@ import asyncio
 import sys
 import time
 from datetime import datetime
-import pyperclip
+
 import pyautogui
+import pyperclip
+
 from src.core.logger import get_logger
 
 logger = get_logger("tibialy.discord_tools.sender")
@@ -29,14 +31,13 @@ def _send_sync(message: str, target_timestamp: float):
         time.sleep(0.05)
 
     # precision sleep
-    while precision_ts := time.time() < target_timestamp:
+    while time.time() < target_timestamp:
         time.sleep(0.01)
-    # pyautogui.press("enter")
+    pyautogui.press("enter")
     after_ts = time.time()
     logger.info(
         "message send",
         target_timestamp=target_timestamp,
-        precision_ts=precision_ts,
         after_ts=after_ts,
     )
 

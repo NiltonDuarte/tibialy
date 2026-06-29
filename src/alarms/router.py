@@ -1,9 +1,12 @@
-from fastapi import APIRouter, HTTPException
 from datetime import datetime
+
 import pyttsx3
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from fastapi import APIRouter, Depends, HTTPException
+
 from src.config import APP_STATE
-from src.core.scheduler import scheduler
 from src.core.logger import get_logger
+from src.core.scheduler import JobType, get_scheduler
 
 logger = get_logger("tibialy.alarms")
 router = APIRouter(prefix="/alarms", tags=["alarms"])
@@ -25,7 +28,7 @@ def trigger_alarm(name: str):
 
 
 @router.post("/potion")
-def start_potion_alarm():
+def start_potion_alarm(scheduler: AsyncIOScheduler = Depends(get_scheduler)):
     scheduler.add_job(
         trigger_alarm,
         "interval",
@@ -34,13 +37,14 @@ def start_potion_alarm():
         id="potion_alarm",
         replace_existing=True,
         misfire_grace_time=1,
+        name=JobType.ALARM,
     )
     logger.info("alarm_set", alarm_name="Skill Potion", interval_minutes=10)
     return {"status": "Potion alarm set (10m)"}
 
 
 @router.post("/plasma_ring")
-def start_plasma_ring_alarm():
+def start_plasma_ring_alarm(scheduler: AsyncIOScheduler = Depends(get_scheduler)):
     scheduler.add_job(
         trigger_alarm,
         "interval",
@@ -49,13 +53,14 @@ def start_plasma_ring_alarm():
         id="plasma_ring_alarm",
         replace_existing=True,
         misfire_grace_time=1,
+        name=JobType.ALARM,
     )
     logger.info("alarm_set", alarm_name="Plasma Ring", interval_minutes=30)
     return {"status": "Plasma Ring alarm set (30m)"}
 
 
 @router.post("/plasma_amulet")
-def start_plasma_amulet_alarm():
+def start_plasma_amulet_alarm(scheduler: AsyncIOScheduler = Depends(get_scheduler)):
     scheduler.add_job(
         trigger_alarm,
         "interval",
@@ -64,13 +69,14 @@ def start_plasma_amulet_alarm():
         id="plasma_amulet_alarm",
         replace_existing=True,
         misfire_grace_time=1,
+        name=JobType.ALARM,
     )
     logger.info("alarm_set", alarm_name="Plasma Amulet", interval_minutes=30)
     return {"status": "Plasma Amulet alarm set (30m)"}
 
 
 @router.post("/prismatic_ring")
-def start_prismatic_ring_alarm():
+def start_prismatic_ring_alarm(scheduler: AsyncIOScheduler = Depends(get_scheduler)):
     scheduler.add_job(
         trigger_alarm,
         "interval",
@@ -79,6 +85,7 @@ def start_prismatic_ring_alarm():
         id="prismatic_ring_alarm",
         replace_existing=True,
         misfire_grace_time=1,
+        name=JobType.ALARM,
     )
     logger.info("alarm_set", alarm_name="Prismatic Ring", interval_minutes=60)
     return {"status": "Prismatic Ring alarm set (1h)"}
@@ -88,7 +95,11 @@ def start_prismatic_ring_alarm():
 
 
 @router.post("/custom/recurring")
-def create_recurring_alarm(name: str, interval_seconds: int):
+def create_recurring_alarm(
+    name: str,
+    interval_seconds: int,
+    scheduler: AsyncIOScheduler = Depends(get_scheduler),
+):
     """Creates an alarm that fires repeatedly at a set interval."""
     job_id = f"custom_{name.replace(' ', '_').lower()}"
     scheduler.add_job(
@@ -99,6 +110,7 @@ def create_recurring_alarm(name: str, interval_seconds: int):
         id=job_id,
         replace_existing=True,
         misfire_grace_time=1,
+        name=JobType.ALARM,
     )
     logger.info(
         "custom_alarm_set_recurring", alarm_name=name, interval_seconds=interval_seconds
@@ -107,7 +119,11 @@ def create_recurring_alarm(name: str, interval_seconds: int):
 
 
 @router.post("/custom/once")
-def create_one_off_alarm(name: str, trigger_time: datetime):
+def create_one_off_alarm(
+    name: str,
+    trigger_time: datetime,
+    scheduler: AsyncIOScheduler = Depends(get_scheduler),
+):
     """Creates a single-use alarm that fires at an exact future date/time."""
     if trigger_time <= datetime.now():
         raise HTTPException(
@@ -115,7 +131,12 @@ def create_one_off_alarm(name: str, trigger_time: datetime):
         )
 
     scheduler.add_job(
-        trigger_alarm, "date", run_date=trigger_time, args=[name], misfire_grace_time=1
+        trigger_alarm,
+        "date",
+        run_date=trigger_time,
+        args=[name],
+        misfire_grace_time=1,
+        name=JobType.ALARM,
     )
     logger.info(
         "custom_alarm_set_once", alarm_name=name, trigger_time=trigger_time.isoformat()

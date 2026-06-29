@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 try:
     from _version import __version__
@@ -14,5 +14,6 @@ else:
 STATIC_PATH = os.path.join(BASE_DIR, "static")
 TEMPLATES_PATH = os.path.join(BASE_DIR, "templates")
 GITHUB_REPO = "NiltonDuarte/tibialy"
+DISCORD_MESSAGE_PREPARATION_SECONDS = 3
 
 APP_STATE = {"alarm_volume": 1.0}

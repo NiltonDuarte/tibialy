@@ -1,10 +1,14 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 from datetime import datetime, timedelta
-from src.core.scheduler import scheduler
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+
+from src.config import DISCORD_MESSAGE_PREPARATION_SECONDS
 from src.core.logger import get_logger
-from src.discord_tools.sender import send_discord_message
+from src.core.scheduler import JobType, get_scheduler
 from src.discord_tools.db import load_db, save_db
+from src.discord_tools.sender import send_discord_message
 
 logger = get_logger("tibialy.discord")
 router = APIRouter(prefix="/discord", tags=["discord"])
@@ -41,7 +45,9 @@ def update_config(config: ConfigModel):
 
 
 @router.post("/schedule")
-def schedule_booking(req: ScheduleRequest):
+def schedule_booking(
+    req: ScheduleRequest, scheduler: AsyncIOScheduler = Depends(get_scheduler)
+):
     if req.trigger_time <= datetime.now():
         raise HTTPException(
             status_code=400, detail="Scheduled time must be in the future."
@@ -64,7 +70,9 @@ def schedule_booking(req: ScheduleRequest):
     # Construct the final template string
     message = f"/book character:{req.character} spot:{req.spot} date:{req.booking_date.strftime("%d.%m.%Y")} start:{req.start_hour} end:{req.end_hour}"
 
-    early_run_date = req.trigger_time - timedelta(seconds=5)
+    early_run_date = req.trigger_time - timedelta(
+        seconds=DISCORD_MESSAGE_PREPARATION_SECONDS
+    )
 
     scheduler.add_job(
         send_discord_message,
@@ -72,6 +80,7 @@ def schedule_booking(req: ScheduleRequest):
         run_date=early_run_date,
         args=[message, req.trigger_time, req.message_count],
         misfire_grace_time=10,
+        name=JobType.DISCORD,
     )
     logger.info(
         "discord_booking_scheduled",

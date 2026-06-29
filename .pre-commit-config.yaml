@@ -11,10 +11,10 @@ repos:
 
   # Ruff for lightning-fast linting and formatting
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.8
+    rev: v0.4.10  # Use the latest version
     hooks:
-      # Run the linter and apply safe fixes automatically
+      # Run the linter and fix import sorting
       - id: ruff
-        args: [ --fix ]
-      # Run the formatter (replaces Black/isort)
+        args: [ --fix, --select, I ]
+      # Optional: Run the formatter (replaces Black)
       - id: ruff-format

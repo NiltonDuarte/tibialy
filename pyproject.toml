@@ -31,6 +31,13 @@ dev = [
 [tool.ruff]
 extend-exclude = ["bottle.py"]
 
+[tool.ruff.lint]
+# Enable the isort (I) rules
+select = ["I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
 [tool.hatch.version]
 source = "vcs"
 
