@@ -6,8 +6,8 @@ from pathlib import Path
 
 
 def get_db_path() -> Path:
-    print(f"🔍 DEBUG: sys.platform = {sys.platform}")
-    print(f"🔍 DEBUG: is frozen? = {getattr(sys, 'frozen', False)}")
+    print(f"DEBUG: sys.platform = {sys.platform}")
+    print(f"DEBUG: is frozen? = {getattr(sys, 'frozen', False)}")
 
     if sys.platform == "win32":
         app_data_dir = Path(os.environ.get("APPDATA", "~")).expanduser() / "Tibialy"
@@ -18,52 +18,52 @@ def get_db_path() -> Path:
 
     app_data_dir.mkdir(parents=True, exist_ok=True)
     persistent_db_path = app_data_dir / "database.yaml"
-    print(f"🔍 DEBUG: Target persistent_db_path = {persistent_db_path}")
+    print(f"DEBUG: Target persistent_db_path = {persistent_db_path}")
 
     if not persistent_db_path.exists():
         if getattr(sys, "frozen", False):
             base_path = Path(sys._MEIPASS)
-            print(f"🔍 DEBUG: sys._MEIPASS = {base_path}")
+            print(f"DEBUG: sys._MEIPASS = {base_path}")
             bundled_db_path = base_path / "database.yaml"
             print(
-                f"🔍 DEBUG: Checking bundled_db_path (default MEIPASS) = {bundled_db_path} | Exists: {bundled_db_path.exists()}"
+                f"DEBUG: Checking bundled_db_path (default MEIPASS) = {bundled_db_path} | Exists: {bundled_db_path.exists()}"
             )
 
             # MACOS APP BUNDLE FIX
             if not bundled_db_path.exists() and sys.platform == "darwin":
                 print(
-                    "🔍 DEBUG: Not found in MEIPASS. macOS detected. Checking Resources folder..."
+                    "DEBUG: Not found in MEIPASS. macOS detected. Checking Resources folder..."
                 )
-                print(f"🔍 DEBUG: sys.executable = {sys.executable}")
+                print(f"DEBUG: sys.executable = {sys.executable}")
                 bundled_db_path = (
                     Path(sys.executable).parent.parent / "Resources" / "database.yaml"
                 )
                 print(
-                    f"🔍 DEBUG: Checking bundled_db_path (macOS Resources) = {bundled_db_path} | Exists: {bundled_db_path.exists()}"
+                    f"DEBUG: Checking bundled_db_path (macOS Resources) = {bundled_db_path} | Exists: {bundled_db_path.exists()}"
                 )
 
         else:
             base_path = Path(__file__).resolve().parent.parent.parent
-            print(f"🔍 DEBUG: Running from source. base_path = {base_path}")
+            print(f"DEBUG: Running from source. base_path = {base_path}")
             bundled_db_path = base_path / "database.yaml"
             print(
-                f"🔍 DEBUG: Checking bundled_db_path (source) = {bundled_db_path} | Exists: {bundled_db_path.exists()}"
+                f"DEBUG: Checking bundled_db_path (source) = {bundled_db_path} | Exists: {bundled_db_path.exists()}"
             )
 
         if bundled_db_path.exists():
             shutil.copy(bundled_db_path, persistent_db_path)
             print(
-                f"📦 Bundled database.yaml copied from {bundled_db_path} to persistent storage."
+                f"Bundled database.yaml copied from {bundled_db_path} to persistent storage."
             )
         else:
             persistent_db_path.touch()
-            print(f"📝 Created a brand new empty database.yaml at {persistent_db_path}")
+            print(f"Created a brand new empty database.yaml at {persistent_db_path}")
             print(
-                "❌ ERROR: Could not find the bundled file! Look at the paths checked above to see where it looked."
+                "ERROR: Could not find the bundled file! Look at the paths checked above to see where it looked."
             )
 
     else:
-        print(f"✅ Persistent database already exists at {persistent_db_path}")
+        print(f"Persistent database already exists at {persistent_db_path}")
 
     return persistent_db_path
 
