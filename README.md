@@ -4,6 +4,20 @@ Tibialy desktop application. Provides helper tools for the MMORPG Tibia. Built w
 
 Source repository: https://github.com/NiltonDuarte/tibialy
 
+## Download & Installation
+
+Executable files are automatically built and published via GitHub Actions.
+
+1. Navigate to the [Releases page](https://github.com/NiltonDuarte/tibialy/releases).
+2. Expand the **Assets** section of the latest release.
+3. Download the archive for your operating system:
+   * **Windows**: Download `Tibialy-vX.X.X-Windows.zip`.
+   * **macOS**: Download `Tibialy-vX.X.X-macOS.zip`.
+4. Extract the `.zip` archive.
+5. Run the extracted application (`Tibialy.exe` on Windows, `Tibialy.app` on macOS).
+
+*Note: `Tibialy-Debug-...` archives are also available. These keep the background console window open for troubleshooting.*
+
 ## Features
 
 * **Alarms Tool**: Text-to-speech (TTS) notifications. Tracks skill potions, plasma rings, custom recurring/one-off timers.
@@ -110,3 +124,4 @@ Fix: Strip the quarantine attribute using the terminal.
 ```bash
 xattr -cr /path/to/dist/Tibialy.app
 ```
+Then open the app normally.
