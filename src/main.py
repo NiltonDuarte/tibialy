@@ -2,7 +2,13 @@ import multiprocessing
 import os
 import sys
 
-from src.core.logger import get_logger, setup_logging
+# ==========================================
+# MACOS THREAD FREEZE PATCH
+# ==========================================
+if sys.platform == "darwin":
+    # Force multiprocessing to use spawn (avoids fork-related Cocoa deadlocks)
+    multiprocessing.set_start_method("spawn", force=True)
+
 
 # 1. Provide multiprocessing support for PyInstaller executables
 if sys.platform.startswith("win"):
@@ -16,6 +22,7 @@ if sys.stderr is None:
 if sys.stdin is None:
     sys.stdin = open(os.devnull, "r")
 
+from src.core.logger import get_logger, setup_logging
 from src.desktop_launcher import start_desktop_app
 
 if __name__ == "__main__":
