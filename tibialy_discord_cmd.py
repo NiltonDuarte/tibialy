@@ -56,7 +56,25 @@ class MacAutomation:
 
         self.ctypes = ctypes
 
-        # Load the CoreGraphics framework directly into memory to eliminate process fork lag
+        # 1. Check macOS Accessibility Permissions
+        try:
+            app_services = ctypes.CDLL(
+                "/System/Library/Frameworks/ApplicationServices.framework/ApplicationServices"
+            )
+            app_services.AXIsProcessTrusted.restype = ctypes.c_bool
+            if not app_services.AXIsProcessTrusted():
+                print("\n" + "!" * 65)
+                print("⚠️  WARNING: macOS Accessibility permissions are missing!")
+                print("The script will silently fail to press Enter without them.")
+                print("Go to: System Settings > Privacy & Security > Accessibility")
+                print(
+                    "and grant permission to your Terminal application, then restart."
+                )
+                print("!" * 65 + "\n")
+        except Exception as e:
+            print(f"Warning: Could not verify Accessibility permissions: {e}")
+
+        # 2. Load the CoreGraphics framework directly into memory to eliminate process fork lag
         self.cg = ctypes.CDLL(
             "/System/Library/Frameworks/ApplicationServices.framework/Frameworks/CoreGraphics.framework/CoreGraphics"
         )
@@ -105,7 +123,6 @@ class MacAutomation:
 
 
 def run_scheduler(message, os_handler):
-    # Target TODAY at 09:59:56.700 AM
     now = datetime.now()
     target_time = datetime(now.year, now.month, now.day, 9, 59, 56, 650000)
 
