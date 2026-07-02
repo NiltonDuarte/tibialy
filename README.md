@@ -150,8 +150,14 @@ curl -O https://raw.githubusercontent.com/NiltonDuarte/tibialy/main/tibialy_disc
 python tibialy_discord_cmd.py
 ```
 3. Type the message you want to send when prompted and hit Enter.
+4. When prompted for the time, press Enter to use the default target time (09:59:56), or input a custom time to override it.
 
 **Important**: Immediately click inside the Discord text box where you want the message sent and leave it focused. Do not minimize the window or click away.
+
+### Testing a Custom Target Time
+If you want to test the script to ensure it interacts with Discord properly on your system, you can set a custom target time for a few seconds in the future.
+
+When the script asks for a target time, provide it in the HH:MM:SS 24-hour format (e.g., if it is currently 14:30:00, you can test it by inputting 14:30:15). The script will wait until that exact moment, paste your message, and hit Enter.
 
 ### OS-Specific Notes
 **macOS Users**: The first time you run this script, macOS will likely block the keystroke. You must go to System Settings > Privacy & Security > Accessibility and grant permission to your Terminal application.
