@@ -53,6 +53,7 @@ class MacAutomation:
     def __init__(self):
         self.caffeinate_process = None
         import ctypes
+        import sys
 
         self.ctypes = ctypes
 
@@ -118,14 +119,11 @@ class MacAutomation:
 
 
 # -------------------------------------------------------------------------
-# CORE AUTOMATION ENGINE (Accepts injected OS Handler)
+# CORE AUTOMATION ENGINE (Accepts injected OS Handler & Target Time)
 # -------------------------------------------------------------------------
 
 
-def run_scheduler(message, os_handler):
-    now = datetime.now()
-    target_time = datetime(now.year, now.month, now.day, 9, 59, 56, 650000)
-
+def run_scheduler(message, os_handler, target_time):
     target_timestamp = target_time.timestamp()
     paste_timestamp = target_timestamp - 2.0
     countdown_stop_timestamp = target_timestamp - 1.0
@@ -136,7 +134,8 @@ def run_scheduler(message, os_handler):
         )
         return
 
-    print("\nCRITICAL: Click inside your Discord chat box NOW and leave it focused!")
+    print(f"\nTarget locked for: {target_time.strftime('%H:%M:%S.%f')[:-3]}")
+    print("CRITICAL: Click inside your Discord chat box NOW and leave it focused!")
     print("-" * 50)
 
     # 1. Turn on sleep prevention
@@ -219,5 +218,30 @@ if __name__ == "__main__":
     # 2. Get user's desired text payload
     message_payload = input("Enter the message to send: ")
 
-    # 3. Inject the handler directly into the execution engine
-    run_scheduler(message_payload, handler)
+    # 3. Get user's target time (or default)
+    time_input = input(
+        "Enter target time (HH:MM:SS) or press Enter for default (09:59:56.650): "
+    ).strip()
+
+    now = datetime.now()
+    if time_input:
+        try:
+            parsed_time = datetime.strptime(time_input, "%H:%M:%S")
+            # Create a new datetime object for today with the parsed time + 650ms precision
+            final_target = datetime(
+                now.year,
+                now.month,
+                now.day,
+                parsed_time.hour,
+                parsed_time.minute,
+                parsed_time.second,
+                650000,
+            )
+        except ValueError:
+            print("Error: Invalid time format. Please use HH:MM:SS (e.g., 14:30:00).")
+            sys.exit(1)
+    else:
+        final_target = datetime(now.year, now.month, now.day, 9, 59, 56, 650000)
+
+    # 4. Inject the handler directly into the execution engine
+    run_scheduler(message_payload, handler, final_target)
